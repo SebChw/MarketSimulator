@@ -2,6 +2,7 @@ package market.entityCreator;
 
 import market.traders.*;
 import market.assets.Currency;
+import market.assets.Asset;
 import market.assets.Commodity;
 import market.markets.*;
 import java.util.*;
@@ -19,10 +20,10 @@ public class EntityFactory {
         HashMap<Currency, Float> investmentBudget = this.attributesGenerator.getRandomInitialBudget(currenciesByNow);
         String name = company.get("name");
         String ipoDate = company.get("ipoDate");
-        float ipoShareValue = this.attributesGenerator.getRandomNumber(5000);
-        float openingPrice = this.attributesGenerator.getRandomNumber(10000);
-        float profit = this.attributesGenerator.getRandomNumber(10000);
-        float revenue = this.attributesGenerator.getRandomNumber(5000);
+        float ipoShareValue = this.attributesGenerator.getRandomFloatNumber(5000);
+        float openingPrice = this.attributesGenerator.getRandomFloatNumber(10000);
+        float profit = this.attributesGenerator.getRandomFloatNumber(10000);
+        float revenue = this.attributesGenerator.getRandomFloatNumber(5000);
 
         return new Company(tradingIdentifier, investmentBudget, name, ipoDate, ipoShareValue, openingPrice, profit, revenue);
     }
@@ -58,7 +59,7 @@ public class EntityFactory {
 
         //Setting some random ratio
         ExchangeRatesProvider exchangeRates = new ExchangeRatesProvider(attributes.get("name"), "commodity");
-        float commodityToCurrency = attributesGenerator.getRandomNumber(6);
+        float commodityToCurrency = attributesGenerator.getRandomFloatNumber(6);
         exchangeRates.updateRate(commodityCurrency.getName(), commodityToCurrency);
         commodityCurrency.updateRate(name, 1/commodityToCurrency);
 
@@ -70,7 +71,7 @@ public class EntityFactory {
         HashSet<String> countriesWhereLegal = this.attributesGenerator.getRandomHashSetOfCountriesNames();
 
         ExchangeRatesProvider exchangeRates = new ExchangeRatesProvider(attributes.get("name"), "currency");
-        exchangeRates.updateRate("gold", attributesGenerator.getRandomNumber(6));
+        exchangeRates.updateRate("gold", attributesGenerator.getRandomFloatNumber(6));
         //When we create new currency we must update links to all other currencies. We could possible store only value w.r.t to gold and recalculate things
         //However we need to store values of currencies w.r.t time.
 
@@ -87,8 +88,21 @@ public class EntityFactory {
         return currency;
     }
 
-    public Market createMarket(){
-        return new Market<Currency>();
+    public <T extends Asset> Market<T> createMarket(ArrayList<Currency> currenciesByNow, boolean withIndices){
+        HashMap<String,String> attributes = this.attributesGenerator.getRandomMarketData();
+        String name = attributes.get("name");
+        String country = attributes.get("country");
+        String city = attributes.get("city");
+        String address = attributes.get("address");
+        float percentageOperationCost = this.attributesGenerator.getRandomFloatNumber((float)0.1);
+        
+        int randomCurrencyIndex = this.attributesGenerator.getRandomArrayIndex(currenciesByNow);
+        Currency tradingCurrency = currenciesByNow.get(randomCurrencyIndex);
+        
+        if (withIndices){
+            return new MarketWithIndices<T>(name, country, city, address, percentageOperationCost, tradingCurrency); 
+        }
+        return new Market<T>(name, country, city, address, percentageOperationCost, tradingCurrency);
     }
 
     

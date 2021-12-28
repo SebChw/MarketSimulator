@@ -10,7 +10,7 @@ public class Currency extends Asset {
     
 
     public Currency(String name, HashSet<String> countriesWhereLegal, ExchangeRatesProvider mainBankRates) {
-        super(name, mainBankRates);
+        super(name, "Currency", mainBankRates);
         this.countriesWhereLegal = countriesWhereLegal;
     }
 

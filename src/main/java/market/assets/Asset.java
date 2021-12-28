@@ -10,22 +10,35 @@ import market.exchangeRates.ExchangeRatesProvider;
 public abstract class Asset implements AssetSubject{
     private String name;
     private float amountInCirculation;
+    private String type;
     private int hypeLevel; // maybe MarketPriceRule will be dependend on that
     private int amountOfOwners; // maybe MarkerPriceRule will be dependent on that
     private ExchangeRatesProvider mainBankRates;
     private ArrayList<AssetObserver> observers; // Abservers that check what's happening with that asset to make some changes about it
 
-    public Asset(String name, ExchangeRatesProvider mainBankRates){
+    public Asset(String name,String type, ExchangeRatesProvider mainBankRates){
         this.name = name;
+        this.type = type;
         this.amountInCirculation = 0;
         this.hypeLevel = 0; // I think these should be set to 0 at the beginning 
         this.amountOfOwners = 0; // I think these should be set to 0 at the beginning
         this.observers = new ArrayList<AssetObserver>();
         this.mainBankRates  = mainBankRates ;
     }   
-
     public String getName(){
         return this.name;
+    }
+    public String getType(){
+        return this.type;
+    }
+    public float getAmountInCirculation(){
+        return this.amountInCirculation;
+    }
+    public int getAmountOfOwners(){
+        return this.amountOfOwners;
+    }
+    public int getHypeLevel(){
+        return this.hypeLevel;
     }
     
     public void plotAssetValueOverTime(Asset versus){

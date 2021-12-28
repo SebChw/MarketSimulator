@@ -6,7 +6,7 @@ public class HumanInvestor extends Trader {
     private String lastName;
 
     public HumanInvestor(String tradingIdentifier, HashMap<Currency, Float> investmentBudget, String name, String lastName){
-        super(tradingIdentifier, investmentBudget, name);
+        super(tradingIdentifier, investmentBudget, name, "human Investor");
         this.lastName = lastName;
     }
 

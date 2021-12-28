@@ -6,7 +6,7 @@ public class Share extends Asset{
     private Company company;
 
     public Share(String name, Company company, ExchangeRatesProvider mainBankRates) {
-        super(name, mainBankRates);
+        super(name, "Share", mainBankRates);
         this.company = company;
     }
 

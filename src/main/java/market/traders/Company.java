@@ -19,7 +19,7 @@ public class Company extends Trader implements AssetSubject{
 
     public Company(String tradingIdentifier, HashMap<Currency, Float> investmentBudget, String name,
                 String ipoDate, float ipoShareValue, float openingPrice, float profit, float revenue){
-        super(tradingIdentifier, investmentBudget, name);
+        super(tradingIdentifier, investmentBudget, name, "Company");
         this.ipoDate = ipoDate;
         this.ipoShareValue = ipoShareValue;
         this.openingPrice = openingPrice;

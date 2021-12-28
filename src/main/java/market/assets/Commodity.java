@@ -11,7 +11,7 @@ public class Commodity extends Asset {
     private int maxPrice;
 
     public Commodity(String name, String tradingUnit, Currency tradingCurrency, ExchangeRatesProvider mainBankRates) {
-        super(name, mainBankRates);
+        super(name, "Commodity" , mainBankRates);
         this.tradingUnit = tradingUnit;
         this.tradingCurrency = tradingCurrency;
     }

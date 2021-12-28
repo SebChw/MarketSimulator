@@ -6,7 +6,7 @@ public class InvestmentFundUnit extends Asset {
     private InvestmentFund issuedBy;
 
     public InvestmentFundUnit(String name, InvestmentFund issuedBy, ExchangeRatesProvider mainBankRates) {
-        super(name, mainBankRates);
+        super(name, "InvestmentFundUnit", mainBankRates);
         this.issuedBy = issuedBy;
     }
 

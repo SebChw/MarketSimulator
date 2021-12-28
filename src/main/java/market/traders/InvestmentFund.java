@@ -14,7 +14,7 @@ public class InvestmentFund extends Trader {
 
     public InvestmentFund(String tradingIdentifier, HashMap<Currency, Float> investmentBudget, String name,
                         String menagerFirstName, String menagerLastName){
-        super(tradingIdentifier, investmentBudget, name);
+        super(tradingIdentifier, investmentBudget, name, "Investment Fund");
         this.menagerFirstName = menagerFirstName;
         this.menagerLastName = menagerLastName;
     }

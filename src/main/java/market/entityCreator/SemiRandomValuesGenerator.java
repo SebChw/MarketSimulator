@@ -18,6 +18,9 @@ public class SemiRandomValuesGenerator {
     private String[] humanInvestorsSecondNames = {"Vivaldi", "Tchaikovsky", "Chopin", "Bach", "Mozart"};
     private String[] humanInvestorsNames = {"Antonio", "Jan", "Sebastian", "Amadeus", "Fyderyk"};
     private String[] investmendFundsNames = {"Vanguard", "Fidelity", "iShares", "Invesco", "Goldman"};
+    private String[] marketNames = {"Cartmax", "MegaPlex", "DollarSmart", "Marketaro", "Marketvio"};
+    private String[] citiesNames = {"Singapur", "Krzywanice", "Posen", "New York", "Old York"};
+    private String[] streetsNames = {"Bourbon Street ", "Abbey Road ", "Lombard Street ", "Haji Lane ", "Passeig de Sant Joan "};
     private HashSet<String> tradingIdentifiers = new HashSet<String>();
     private int[] years = {2000,2005,2010,2020,2015};
 
@@ -52,8 +55,15 @@ public class SemiRandomValuesGenerator {
         return investmentFund;
     }
     public HashMap<String,String> getRandomMarketData(){
+        HashMap<String,String> market = new HashMap<String,String>();
+        getRandomValueAndPutToHashMap(this.marketNames, "name", market);
+        getRandomValueAndPutToHashMapNotUniqueNames(this.countriesNames, "country", market);
+        getRandomValueAndPutToHashMapNotUniqueNames(this.citiesNames, "city", market);
+        int name_idx = this.randomGenerator.nextInt(this.streetsNames.length);
+        market.put("address", this.streetsNames[name_idx] + this.randomGenerator.nextInt(100));
 
-        return new HashMap<String,String>();
+
+        return market;
     }
     public HashMap<String,String> getRandomIndexData(){
 
@@ -99,7 +109,7 @@ public class SemiRandomValuesGenerator {
         return countriesNames;
 
     }
-    public float getRandomNumber(int multiplier){
+    public float getRandomFloatNumber(float multiplier){
         return (float) ((this.randomGenerator.nextFloat() + 0.1) * multiplier); // nextFloat returns a floating point number between [0.0, 1.0]
     }
 
@@ -109,11 +119,16 @@ public class SemiRandomValuesGenerator {
         array[name_idx] = array[name_idx] + "_";
     }
 
+    public void getRandomValueAndPutToHashMapNotUniqueNames(String[] array, String key,  HashMap<String,String> randomAttributes){
+        int name_idx = this.randomGenerator.nextInt(array.length);
+        randomAttributes.put(key, array[name_idx]);
+    }
+
     public HashMap<Currency, Float> getRandomInitialBudget(ArrayList<Currency> currenciesByNow){
         HashMap<Currency, Float> initialBudget = new HashMap<Currency, Float>();
 
         for (Currency currency : currenciesByNow) {
-            initialBudget.put(currency, this.getRandomNumber(1000));
+            initialBudget.put(currency, this.getRandomFloatNumber(1000));
         }
 
         return initialBudget;
