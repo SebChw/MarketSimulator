@@ -1,6 +1,6 @@
-package market.marketIndex;
+package market.assets.marketIndex;
 
-public class StartupsCompaniesFilter implements CompaniesFilter {
+public class BiggestCompaniesFilter implements CompaniesFilter{
 
     @Override
     public void filterCompanies() {

@@ -5,7 +5,7 @@ import market.assets.Currency;
 public class HumanInvestor extends Trader {
     private String lastName;
 
-    public HumanInvestor(String tradingIdentifier, HashMap<Currency, Float> investmentBudget, String name, String lastName){
+    public HumanInvestor(String tradingIdentifier, HashMap<String, Float> investmentBudget, String name, String lastName){
         super(tradingIdentifier, investmentBudget, name, "human Investor");
         this.lastName = lastName;
     }

@@ -9,39 +9,51 @@ import javafx.stage.Stage;
 //! Tink about making the market about heroes 3!
 import market.world.ControlPanel;
 import market.world.World;
+import market.assets.Asset;
+import market.assets.Currency;
+import market.assets.Commodity;
 import market.gui.MarketPanelController;
 import market.gui.asset.AssetViewController;
+import market.traders.InvestmentFund;
 import market.gui.TradersPanelController;
+import java.time.LocalDate;
+
+//! WE MUST HAVE SOME SENSE OF TIME!!!
 
 
 public class App extends Application{
     private final static World world = new World();
+    private static LocalDate currentTime = LocalDate.now();
 
     public static void main(String[] args) throws Exception {
         ControlPanel.run();
 
+        for (int i = 0; i <10; i++){
+            //Here updating all ratios will happen etc....
+            addOneDay(); //! Works well
+        }
+        world.addNewCurrency();
+        // world.addNewCurrency();
+        // world.addNewCurrency();
+        // world.addNewCurrency();
+        // world.addNewCurrency();
+        // world.addNewCurrency();
+        // world.addNewCurrency();
+        // world.addNewCurrency();
+        // world.addNewCurrency();
+        // world.addNewCurrency();
+        world.addNewCurrency();
         
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        // world.addNewCurrency();
-        
+        world.addNewCommodity();
         // world.addNewCommodity();
-        // world.addNewCommodity();
-        // world.addNewCompany();
-        world.addNewHumanInvestor();
+        world.addNewCompany();
+        //world.addNewHumanInvestor();
         world.addNewInvestmentFund();
         // world.addNewCommodityMarket();
-        // world.addNewCurrencyMarket();
+        world.addNewRandomMarket();
         // world.addNewStockMarket();
 
+        world.testTrade();
         System.out.println("JEJ");
         launch(args);
 
@@ -61,6 +73,14 @@ public class App extends Application{
         stage.show();
     }
 
+    static private void addOneDay() {
+        currentTime = currentTime.plusDays(1);
+    }
+
+    static private LocalDate getCurrentTime() {
+        return currentTime;
+    }
+
     public static void passAssetsToController(AssetViewController controller){
         controller.addAssets(world.getAllAssets());
     }
@@ -78,14 +98,23 @@ public class App extends Application{
         world.addNewCurrency();
     }
 
+    public static void addCurrency(Currency curr){
+        world.addNewCurrency(curr);
+    }
+
     public static void addCommodity(){
         world.addNewCommodity();
+    }
+    public static void addCommodity(Commodity com){
+        world.addNewCommodity(com);
     }
 
     public static void addCompany(){
         world.addNewCompany();
     }
-
+    public static void addInvestmentFundUnit(InvestmentFund issuedBy){
+        world.addNewInvestmentFundUnit(issuedBy);
+    }
     public static void addMarket(){
         world.addNewRandomMarket();
     }
@@ -115,6 +144,9 @@ public class App extends Application{
     }
     public static int getNumberOfIndices(){
         return world.getNumberOfIndices();
+    }
+    public static Asset getParticularAsset(String name){
+        return world.getParticularAsset(name);
     }
     
 }

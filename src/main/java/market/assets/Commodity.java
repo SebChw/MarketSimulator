@@ -2,23 +2,23 @@ package market.assets;
 
 import market.assets.Currency;
 import market.exchangeRates.ExchangeRatesProvider;
-public class Commodity extends Asset {
+import java.util.*;
+public class Commodity extends NonCurrencyAsset {
     private String tradingUnit;
-    private Currency tradingCurrency;
     //Ill read all these informations from ExchangeRatesProvider
-    private int currentPrice;
-    private int minPrice;
-    private int maxPrice;
+    private float currentPrice; // this I will make functions for!
+    private float minPrice;
+    private float maxPrice;
 
-    public Commodity(String name, String tradingUnit, Currency tradingCurrency, ExchangeRatesProvider mainBankRates) {
-        super(name, "Commodity" , mainBankRates);
+    public Commodity(String name, String tradingUnit, Currency tradingCurrency, Float startingRate) {
+        //At the beginning there is no commopdities in circulation everything start when some user buy it.
+        super(name, "Commodity", 0, tradingCurrency, startingRate);
         this.tradingUnit = tradingUnit;
-        this.tradingCurrency = tradingCurrency;
     }
 
     @Override
     public String toString(){
-        return super.toString() + "\ntradingUnit:" + this.tradingUnit + "\ntradingCurrency: " + this.tradingCurrency.getName();
+        return super.toString() + "\ntradingUnit:" + this.tradingUnit;
     }
 
     @Override

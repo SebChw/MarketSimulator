@@ -7,15 +7,13 @@ import market.observers.AssetObserver;
 import java.util.LinkedList;
 
 public class ExchangeRatesProvider implements AssetObserver{
-    private String nameOfAsset;
-    private String typeOfAsset;
+    private String nameOfBackingAsset;
     private MarketPriceRule marketRule; 
     private HashMap<String, LinkedList<Float>> rates; // This provides exchange rates of one asset to all other
 
 
-    public ExchangeRatesProvider(String nameOfAsset, String typeOfAsset){
-        this.nameOfAsset = nameOfAsset;
-        this.typeOfAsset = typeOfAsset;
+    public ExchangeRatesProvider(String nameOfBackingAsset){
+        this.nameOfBackingAsset = nameOfBackingAsset; // Main asset that Backs everything in our system
 
         this.rates = new HashMap<String, LinkedList<Float>>();
     }
@@ -25,21 +23,22 @@ public class ExchangeRatesProvider implements AssetObserver{
         if (currentRates == null){
             currentRates = new LinkedList<Float>();
         }
-        currentRates.add(rate); // Consider here inserting new rate at the begining so taking it will be O(1). //!Add FIRST METHOD
+        currentRates.addFirst(rate); // Consider here inserting new rate at the begining so taking it will be O(1). //!Add FIRST METHOD
         this.rates.put(nameOfAsset, currentRates); // This will suceed either tu put rate for the first time or to update it
     }
 
-    public String getNameOfAsset(){
-        return this.nameOfAsset;
+    public String getNameOfBackingAsset(){
+        return this.nameOfBackingAsset;
     }
     
     public float getRate(String nameOfAsset){
-        return this.rates.get(nameOfAsset).getLast(); //!Consider using GetFirst here and appending new raters at the beginning!
+        return this.rates.get(nameOfAsset).getFirst(); //!Consider using GetFirst here and appending new raters at the beginning!
     }
+
 
     @Override
     public void update(String assetName, int hypeLevel, int amountOfOwners, float AmountInCirculation) {
-        if (assetName == this.nameOfAsset){
+        if (assetName == this.nameOfBackingAsset){
             //Do for loop over all assets here
             //use this class updateRate function!
         }

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.LinkedList;
+
+import market.assets.Asset;
 import market.assets.Currency;
 
 public class SemiRandomValuesGenerator {
@@ -113,6 +115,10 @@ public class SemiRandomValuesGenerator {
         return (float) ((this.randomGenerator.nextFloat() + 0.1) * multiplier); // nextFloat returns a floating point number between [0.0, 1.0]
     }
 
+    public int getRandomIntNumber(int max){
+        return this.randomGenerator.nextInt(max); // nextFloat returns a floating point number between [0.0, 1.0]
+    }
+
     public void getRandomValueAndPutToHashMap(String[] array, String key,  HashMap<String,String> randomAttributes){
         int name_idx = this.randomGenerator.nextInt(array.length);
         randomAttributes.put(key, array[name_idx]);
@@ -124,11 +130,11 @@ public class SemiRandomValuesGenerator {
         randomAttributes.put(key, array[name_idx]);
     }
 
-    public HashMap<Currency, Float> getRandomInitialBudget(ArrayList<Currency> currenciesByNow){
-        HashMap<Currency, Float> initialBudget = new HashMap<Currency, Float>();
+    public HashMap<String, Float> getRandomInitialBudget(ArrayList<Currency> currenciesByNow){
+        HashMap<String, Float> initialBudget = new HashMap<String, Float>();
 
         for (Currency currency : currenciesByNow) {
-            initialBudget.put(currency, this.getRandomFloatNumber(1000));
+            initialBudget.put(currency.getName(), this.getRandomFloatNumber(1000));
         }
 
         return initialBudget;
@@ -154,5 +160,14 @@ public class SemiRandomValuesGenerator {
         return Integer.toString(day) + "." + Integer.toString(month) + "." + Integer.toString(year);
     }
 
+    public Currency getRandomCurrency(ArrayList<Currency> currenciesByNow){
+        int randomCurrencyIndex = this.getRandomArrayIndex(currenciesByNow);
+        return currenciesByNow.get(randomCurrencyIndex);
+    }
+
+    public Asset getRandomAsset(ArrayList<? extends Asset> assetsByNow){
+        int randomAssetIndex = this.getRandomArrayIndex(assetsByNow);
+        return assetsByNow.get(randomAssetIndex);
+    }
     
 }

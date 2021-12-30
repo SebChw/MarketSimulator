@@ -13,17 +13,16 @@ public abstract class Asset implements AssetSubject{
     private String type;
     private int hypeLevel; // maybe MarketPriceRule will be dependend on that
     private int amountOfOwners; // maybe MarkerPriceRule will be dependent on that
-    private ExchangeRatesProvider mainBankRates;
     private ArrayList<AssetObserver> observers; // Abservers that check what's happening with that asset to make some changes about it
 
-    public Asset(String name,String type, ExchangeRatesProvider mainBankRates){
+    public Asset(String name, String type, float amountInCirculation){
         this.name = name;
         this.type = type;
-        this.amountInCirculation = 0;
+        this.amountInCirculation = amountInCirculation;
         this.hypeLevel = 0; // I think these should be set to 0 at the beginning 
         this.amountOfOwners = 0; // I think these should be set to 0 at the beginning
         this.observers = new ArrayList<AssetObserver>();
-        this.mainBankRates  = mainBankRates ;
+        
     }   
     public String getName(){
         return this.name;
@@ -50,9 +49,21 @@ public abstract class Asset implements AssetSubject{
         return "Asset name: " + this.name + "\n amount in circulation: " + this.amountInCirculation + "\n hype Level" + this.hypeLevel + "\n amount of owners: " + this.amountOfOwners;
     }
 
-    public void updateRate(String nameOfAsset, Float rate){
-        this.mainBankRates.updateRate(nameOfAsset, rate);
-    }
+    public abstract float calculateThisToMain(float amount);
+    public abstract float calculateMainToThis(float amount);
+    public float calculateThisToDifferent(Asset tradedAsset, float amount){
+        //Here I could just do division However I think this is more clear and only up to 2 operations more
+        //Also THis is more beneficial It I have some more complicated Assets Like marketIndex for whom calculating 
+        //we can't just get these two ratios that easily.
+        return tradedAsset.calculateMainToThis(this.calculateThisToMain(amount));
+    };
+    public float calculateDifferentToThis(Asset tradedAsset, float amount){
+        return this.calculateMainToThis(tradedAsset.calculateThisToMain(amount));
+    };
+
+    // public void updateRate(String nameOfAsset, Float rate){
+    //     this.mainBankRates.updateRate(nameOfAsset, rate);
+    // }
 
     @Override
     public void notifyObservers() {
