@@ -1,6 +1,10 @@
 package market.traders;
 
 import java.util.HashMap;
+
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+
 import java.util.ArrayList;
 import market.assets.ProofOfPurchase;
 import market.tradingSystems.Trade;
@@ -12,6 +16,7 @@ public class InvestmentFund extends Trader {
     private Trade fundTradingSystem;
     private Currency registeredCurrency;
 
+    private String [] moreDetails = {"Menager first name: ", "Menager last name: ", "Registered currency: "}; 
     private HashMap<String, ArrayList<ProofOfPurchase>> transactions;
 
     public InvestmentFund(String tradingIdentifier, HashMap<String, Float> investmentBudget, String name,
@@ -34,5 +39,15 @@ public class InvestmentFund extends Trader {
 
     public void IssueFundUnit(){
         App.addInvestmentFundUnit(this);
+    }
+
+    public void fillGridPane(GridPane traderDetails){
+        super.fillGridPane(traderDetails);
+        String [] filledDetails = {menagerFirstName, menagerLastName, registeredCurrency.getName()};
+        for (int i = 0; i < filledDetails.length; i++) {
+            Label l = new Label();
+            l.setText(moreDetails[i] + filledDetails[i]);
+            traderDetails.add(l, 0, i + 3);
+        }
     }
 }

@@ -2,7 +2,8 @@ package market.traders;
 import market.markets.Market;
 import java.util.HashMap;
 import java.util.Objects;
-
+import javafx.scene.layout.GridPane;
+import javafx.scene.control.Label;
 import market.assets.Currency;
 
 public class Trader {
@@ -10,19 +11,23 @@ public class Trader {
     private HashMap<String, Float> investmentBudget;
     private String name;
     private String type;
-
+    private String [] details = {"Id: ", "Type: ", "Name: "};
     public Trader(String tradingIdentifier, HashMap<String, Float> investmentBudget, String name, String type){
         this.tradingIdentifier = tradingIdentifier;
         this.investmentBudget = investmentBudget;
         this.name = name;
         this.type= type;
     }
-
-    public void buyOnMarket(Market<?> market){
+    
+    @Override
+    public String toString(){
+        return this.tradingIdentifier + " " + this.type + " " + this.name; 
+    }
+    public void buyOnMarket(Market market){
         //market.buy(this);
     }
 
-    public void sellOnMarket(Market<?> market){
+    public void sellOnMarket(Market market){
         //market.sell(this);
     }
 
@@ -68,6 +73,15 @@ public class Trader {
             else{
                 this.investmentBudget.put(assetName, currentBudget);
             }
+        }
+    }
+
+    public void fillGridPane(GridPane traderDetails){
+        String [] filledDetails = {tradingIdentifier, type, name};
+        for (int i = 0; i < details.length; i++) {
+            Label l = new Label();
+            l.setText(details[i] + filledDetails[i]);
+            traderDetails.add(l, 0, i);
         }
     }
 }

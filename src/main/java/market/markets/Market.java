@@ -5,6 +5,10 @@ import market.assets.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+
 import java.util.ArrayList;
 import market.traders.Trader;
 import market.tradingSystems.Trade;
@@ -12,7 +16,7 @@ import market.assets.ProofOfPurchase;
 import market.assets.Asset;
 import market.App;
 
-public class Market <T extends Asset> {
+public class Market {
     private String name;
     private String country;
     private String city;
@@ -21,14 +25,15 @@ public class Market <T extends Asset> {
     private Currency tradingCurrency;
     private String assetType;
     
+    private String [] details = {"Name: ", "Country: ", "City: ", "Address: ", "Operation cost: ", "Trading Currency: ", "Asset type: "};
+
     private HashMap<Trader, ArrayList<ProofOfPurchase>> clients = new HashMap<Trader, ArrayList<ProofOfPurchase>>();
-    private HashMap<String, T> availableAssets = new HashMap<String, T>(); // Maybe make this justa HashSet ?
+    private HashMap<String, Asset> availableAssets = new HashMap<String, Asset>(); // Maybe make this justa HashSet ?
     
     private Trade tradingSystem;
 
     public Market(String name, String country, String city, String address, 
-                float percentageOperationCost, Currency tradingCurrency, HashMap<String, T> availableAssets){
-        
+                float percentageOperationCost, Currency tradingCurrency, HashMap<String, Asset> availableAssets){
         this.name=name;
         this.country=country;
         this.city=city;
@@ -51,7 +56,7 @@ public class Market <T extends Asset> {
         cost += cost*this.percentageOperationCost; // we need to increase the cost
         if (traderInvestmentBudget.containsKey(tradingCurrencyName) && traderInvestmentBudget.get(tradingCurrencyName) >= cost){
             float tradingCurrencyAmount = traderInvestmentBudget.get(tradingCurrencyName);
-            T asset = availableAssets.get(wantedAsset.getName());
+            Asset asset = availableAssets.get(wantedAsset.getName());
            
             if (cost <= tradingCurrencyAmount){
                 trader.addBudget(wantedAsset.getName(), amount);
@@ -130,8 +135,28 @@ public class Market <T extends Asset> {
         return this.tradingCurrency.getName();
     }
 
-    public HashMap<String, T> getAvailableAssets(){
-        return this.availableAssets;
+    public ArrayList<Asset> getAvailableAssets(){
+        return new ArrayList<Asset>(this.availableAssets.values());
     }
 
+    public void addNewAsset(Asset asset){
+        if (asset.getType().equals(this.assetType)){
+            this.availableAssets.put(asset.getName(), asset);
+        }
+    }
+
+    public void addNewMarketIndex(Asset marketIndex){
+        if (marketIndex.getType().equals(this.assetType)){
+            this.availableAssets.put(marketIndex.getName(), marketIndex);
+        }
+    }
+
+    public void fillGridPane(GridPane traderDetails){
+        String [] filledDetails = {name, country, city, address, String.format("%.2f", percentageOperationCost*100) + "%", tradingCurrency.getName(), assetType};
+        for (int i = 0; i < details.length; i++) {
+            Label l = new Label();
+            l.setText(details[i] + filledDetails[i]);
+            traderDetails.add(l, 0, i);
+        }
+    }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TableView fx:id="tableView" layoutX="291.0" layoutY="64.0" prefHeight="294.0" prefWidth="283.0">
+        <columns>
+          <TableColumn fx:id="assetName" prefWidth="147.0" text="Asset name" />
+          <TableColumn fx:id="amount" minWidth="5.0" prefWidth="135.0" text="amount" />
+        </columns>
+      </TableView>
+      <GridPane fx:id="traderDetails" layoutX="28.0" layoutY="39.0" prefHeight="32.0" prefWidth="206.0" vgap="10.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+      </GridPane>
+      <Label layoutX="291.0" layoutY="29.0" prefHeight="21.0" prefWidth="247.0" text="Investor's budget" />
+   </children>
+</AnchorPane>

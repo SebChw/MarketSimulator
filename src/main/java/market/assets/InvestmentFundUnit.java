@@ -4,7 +4,7 @@ import market.traders.InvestmentFund;
 
 import java.util.HashMap;
 
-public class InvestmentFundUnit extends NonCurrencyAsset {
+public class InvestmentFundUnit extends AssetBackedByCurrency {
     //Generally one investemnt FundUnit may probably issue a lot of different InvestmentFundUnits
     private InvestmentFund issuedBy;
     private float availableUnits;

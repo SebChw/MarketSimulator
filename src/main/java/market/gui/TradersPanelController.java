@@ -15,12 +15,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.scene.Node;
-import market.traders.Trader;
+import market.traders.*;
 import java.util.ArrayList;
 import market.App;
 
@@ -51,6 +53,23 @@ public class TradersPanelController implements Initializable{
         traderName.setCellValueFactory(new PropertyValueFactory<>("name"));
         traderType.setCellValueFactory(new PropertyValueFactory<>("type"));
         traderBudgetInGold.setCellValueFactory(new PropertyValueFactory<>("budgetInGold"));
+
+        tableView.setRowFactory(tv -> {
+            TableRow<Trader> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    Trader rowData = row.getItem();
+                    try {
+                        popUpInformationAboutTrader(rowData);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+            
+                }
+            });
+            return row ;
+        });
 
         App.passTradersToController(this);
         // java lambdas: (arguments) -> body
@@ -96,6 +115,22 @@ public class TradersPanelController implements Initializable{
 
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void popUpInformationAboutTrader(Trader trader) throws IOException{
+        // if (trader.getType().equals("human investor")){
+        //     FXMLLoader loader = new FXMLLoader(TadersPanelController.class.getResource(""))
+        // }
+        FXMLLoader loader =  new FXMLLoader(TradersPanelController.class.getResource("traderDetailsScene.fxml"));
+        
+        TraderDetailsController controller = new TraderDetailsController(trader);
+        loader.setController(controller);
+
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }

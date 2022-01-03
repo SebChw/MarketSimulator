@@ -2,7 +2,7 @@ package market.assets;
 
 import market.traders.Company;
 import market.exchangeRates.ExchangeRatesProvider;
-public class Share extends NonCurrencyAsset{
+public class Share extends AssetBackedByCurrency{
     //! Generally commodities and Currencies rather doesn't have limits. However Company issue only some shares and only issued can be
     //! Bough no more
     private Company company;
@@ -14,6 +14,11 @@ public class Share extends NonCurrencyAsset{
         this.company = company;
         this.availableShares = amountInCirulation;
         
+    }
+    
+    public void increaseShares(int amount){
+        this.availableShares += amount;
+        this.increaseAmountInCirculation(amount);
     }
 
     @Override

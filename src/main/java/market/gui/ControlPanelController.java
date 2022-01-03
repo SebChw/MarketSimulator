@@ -23,7 +23,8 @@ public class ControlPanelController implements Initializable{
     @FXML private Label currencyLabel;
     @FXML private Label commodityLabel;
     @FXML private Label marketLabel;
-    @FXML private Label indexLabel;
+    @FXML private Label staticIndexLabel;
+    @FXML private Label dynamicIndexLabel;
     @FXML private Label companyLabel;
     @FXML private Label humanInvestorLabel;
     @FXML private Label investmentFundLabel;
@@ -39,13 +40,17 @@ public class ControlPanelController implements Initializable{
         currencyLabel.setText("Currency: " + App.getNumberOfCurrencies());
     }
 
+    public void createStaticIndex(){
+        App.addStaticIndex();
+        staticIndexLabel.setText("Static index: " + App.getNumberOfStaticIndices());
+    }
+    public void createDynamicIndex(){
+        App.addDynamicIndex();
+        dynamicIndexLabel.setText("Dynamic index: " + App.getNumberOfDynamicIndices());
+    }
     public void createCommodity(){
         App.addCommodity();
         commodityLabel.setText("Commodity: " + App.getNumberOfCommodities());
-    }
-
-    public void createIndex(){
-
     }
 
     public void createCompany(){
@@ -75,7 +80,8 @@ public class ControlPanelController implements Initializable{
         currencyLabel.setText("Currencies: " + App.getNumberOfCurrencies());
         commodityLabel.setText("Commodities: " + App.getNumberOfCommodities());
         marketLabel.setText("Markets: " + App.getNumberOfMarkets());
-        indexLabel.setText("Indices: " + App.getNumberOfIndices());
+        staticIndexLabel.setText("Static indices: " + App.getNumberOfStaticIndices());
+        dynamicIndexLabel.setText("Dynamic indices: " + App.getNumberOfDynamicIndices());
         companyLabel.setText("Companies: " + App.getNumberOfCompanies());
         humanInvestorLabel.setText("Human investors: " + App.getNumberOfHumanInvestors());
         investmentFundLabel.setText("Investments funds: " + App.getNumberOfInvestmentFunds());

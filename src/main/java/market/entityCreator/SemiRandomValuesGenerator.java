@@ -3,6 +3,7 @@ package market.entityCreator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -23,10 +24,11 @@ public class SemiRandomValuesGenerator {
     private String[] marketNames = {"Cartmax", "MegaPlex", "DollarSmart", "Marketaro", "Marketvio"};
     private String[] citiesNames = {"Singapur", "Krzywanice", "Posen", "New York", "Old York"};
     private String[] streetsNames = {"Bourbon Street ", "Abbey Road ", "Lombard Street ", "Haji Lane ", "Passeig de Sant Joan "};
+    private String[] marketIndicesNames = {"S&P", "Nasdaq Composite", "Dow Jones", "Average", "MSCI World", "FTSE"};
     private HashSet<String> tradingIdentifiers = new HashSet<String>();
     private int[] years = {2000,2005,2010,2020,2015};
 
-    private Random randomGenerator = new Random();
+    private static Random randomGenerator = new Random();
 
     public SemiRandomValuesGenerator(){       
     }
@@ -61,15 +63,17 @@ public class SemiRandomValuesGenerator {
         getRandomValueAndPutToHashMap(this.marketNames, "name", market);
         getRandomValueAndPutToHashMapNotUniqueNames(this.countriesNames, "country", market);
         getRandomValueAndPutToHashMapNotUniqueNames(this.citiesNames, "city", market);
-        int name_idx = this.randomGenerator.nextInt(this.streetsNames.length);
-        market.put("address", this.streetsNames[name_idx] + this.randomGenerator.nextInt(100));
+        int name_idx = randomGenerator.nextInt(this.streetsNames.length);
+        market.put("address", this.streetsNames[name_idx] + randomGenerator.nextInt(100));
 
 
         return market;
     }
     public HashMap<String,String> getRandomIndexData(){
+        HashMap<String, String> index = new HashMap<String,String>();
+        getRandomValueAndPutToHashMap(this.marketIndicesNames, "name", index);
 
-        return new HashMap<String,String>();
+        return index;
     }
     public HashMap<String,String> getRandomCommodityData(){
         HashMap<String,String> commodity = new HashMap<String,String>();
@@ -98,12 +102,12 @@ public class SemiRandomValuesGenerator {
             indicesOfCountries.add(i);
         }
         
-        int numberOfCountriesToBeDrawn = this.randomGenerator.nextInt(numberOfCountries) + 1; // Since this is exclusive by adding 1 we got range [1, size]
+        int numberOfCountriesToBeDrawn = randomGenerator.nextInt(numberOfCountries) + 1; // Since this is exclusive by adding 1 we got range [1, size]
 
         //Here we consecutively randomly select index of one country add this country to the HashSet and then
         //we remove it from possible indices so that is selection withouth reperition
         while (indicesOfCountries.size() > (numberOfCountries - numberOfCountriesToBeDrawn)){
-            int index = this.randomGenerator.nextInt(indicesOfCountries.size());
+            int index = randomGenerator.nextInt(indicesOfCountries.size());
 
             countriesNames.add(this.countriesNames[indicesOfCountries.remove(index)]);
         }
@@ -111,22 +115,22 @@ public class SemiRandomValuesGenerator {
         return countriesNames;
 
     }
-    public float getRandomFloatNumber(float multiplier){
-        return (float) ((this.randomGenerator.nextFloat() + 0.1) * multiplier); // nextFloat returns a floating point number between [0.0, 1.0]
+    public static float getRandomFloatNumber(float multiplier){
+        return (float) ((randomGenerator.nextFloat() + 0.1) * multiplier); // nextFloat returns a floating point number between [0.0, 1.0]
     }
 
-    public int getRandomIntNumber(int max){
-        return this.randomGenerator.nextInt(max); // nextFloat returns a floating point number between [0.0, 1.0]
+    public static int getRandomIntNumber(int max){
+        return randomGenerator.nextInt(max); // nextFloat returns a floating point number between [0.0, 1.0]
     }
 
     public void getRandomValueAndPutToHashMap(String[] array, String key,  HashMap<String,String> randomAttributes){
-        int name_idx = this.randomGenerator.nextInt(array.length);
+        int name_idx = randomGenerator.nextInt(array.length);
         randomAttributes.put(key, array[name_idx]);
         array[name_idx] = array[name_idx] + "_";
     }
 
     public void getRandomValueAndPutToHashMapNotUniqueNames(String[] array, String key,  HashMap<String,String> randomAttributes){
-        int name_idx = this.randomGenerator.nextInt(array.length);
+        int name_idx = randomGenerator.nextInt(array.length);
         randomAttributes.put(key, array[name_idx]);
     }
 
@@ -134,14 +138,14 @@ public class SemiRandomValuesGenerator {
         HashMap<String, Float> initialBudget = new HashMap<String, Float>();
 
         for (Currency currency : currenciesByNow) {
-            initialBudget.put(currency.getName(), this.getRandomFloatNumber(1000));
+            initialBudget.put(currency.getName(), getRandomFloatNumber(1000));
         }
 
         return initialBudget;
     }
 
     public int getRandomArrayIndex(ArrayList<?> array){
-        return this.randomGenerator.nextInt(array.size());
+        return randomGenerator.nextInt(array.size());
     }
 
     public String getRandomIdentifier(){
@@ -153,11 +157,11 @@ public class SemiRandomValuesGenerator {
     }
 
     public String getRandomDate(){
-        int year = this.years[this.randomGenerator.nextInt(this.years.length)];
-        int month = this.randomGenerator.nextInt(12) + 1;
-        int day = this.randomGenerator.nextInt(28) + 1;
-        
-        return Integer.toString(day) + "." + Integer.toString(month) + "." + Integer.toString(year);
+        int year = this.years[randomGenerator.nextInt(this.years.length)];
+        int month = randomGenerator.nextInt(12) + 1;
+        int day = randomGenerator.nextInt(28) + 1;
+        //The locale is in case someone uses Arabic language
+        return Integer.toString(year) + "-" + String.format((Locale) null,"%02d", month) + "-" + String.format((Locale) null, "%02d", day);
     }
 
     public Currency getRandomCurrency(ArrayList<Currency> currenciesByNow){

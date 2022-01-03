@@ -13,22 +13,19 @@ public class MarketTest {
     @Test
     //IF THIS TEST IS PASSED THEN MECHANICS OF SELLING AND BUYING TRADES WORKS WELL IN ALL SCENARIOS I COULD IMAGINE!
     void testBuyAndSell() {
-        ExchangeRatesProvider rates = new ExchangeRatesProvider("pieczarki");
-        rates.updateRate("zloty", (float)2);
-        rates.updateRate("yang", (float)0.5); // Yang is more expensive
-        Currency cur1 = new Currency("zloty", null, rates);
-        Currency cur2 = new Currency("yang", null, rates);
+        Currency cur1 = new Currency("zloty", null, "pieczarki", (float)2);
+        Currency cur2 = new Currency("yang", null, "pieczarki", (float)0.5);
         Commodity com1 = new Commodity("zloto", null, cur2, (float)5);
         Commodity com2 = new Commodity("srebro", null, cur1, (float)2);
-        HashMap<String,Currency> availableCurrencies = new HashMap<String,Currency>();
-        HashMap<String,Commodity> availableCommodities = new HashMap<String,Commodity>();
+        HashMap<String,Asset> availableCurrencies = new HashMap<String,Asset>();
+        HashMap<String,Asset> availableCommodities = new HashMap<String,Asset>();
         availableCurrencies.put(cur1.getName(), cur1);
         availableCurrencies.put(cur2.getName(), cur2);
         availableCommodities.put(com1.getName(), com1);
         availableCommodities.put(com2.getName(), com2);
 
-        Market<Currency> market = new Market<Currency>(null,null,null,null, (float)0.1,cur1, availableCurrencies);
-        Market<Commodity> market2 = new Market<Commodity>(null,null,null,null, (float)0.1,cur2, availableCommodities);
+        Market market = new Market(null,null,null,null, (float)0.1,cur1, availableCurrencies);
+        Market market2 = new Market(null,null,null,null, (float)0.1,cur2, availableCommodities);
         HashMap<String,Float> investmentBudget = new HashMap<String,Float>();
         investmentBudget.put("zloty", (float)10);
         investmentBudget.put("yang", (float)10);

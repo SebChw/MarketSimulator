@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -32,18 +33,18 @@ public class MarketPanelController implements Initializable {
 
 
     @FXML private TextField filterField;
-    @FXML private TableView<Market<? extends Asset>> tableView;
-    @FXML private TableColumn<Market<? extends Asset>, String> marketName;
-    @FXML private TableColumn<Market<? extends Asset>, String> marketType;
-    @FXML private TableColumn<Market<? extends Asset>, String> marketCountry;
-    @FXML private TableColumn<Market<? extends Asset>, String> marketCity;
-    @FXML private TableColumn<Market<? extends Asset>, String> marketAddress;
-    @FXML private TableColumn<Market<? extends Asset>, Float> marketCost;
+    @FXML private TableView<Market> tableView;
+    @FXML private TableColumn<Market, String> marketName;
+    @FXML private TableColumn<Market, String> marketType;
+    @FXML private TableColumn<Market, String> marketCountry;
+    @FXML private TableColumn<Market, String> marketCity;
+    @FXML private TableColumn<Market, String> marketAddress;
+    @FXML private TableColumn<Market, Float> marketCost;
     @FXML private TableColumn<Asset, String> marketCurrency;
 
-    private ObservableList<Market<? extends Asset>> dataList = FXCollections.observableArrayList();
+    private ObservableList<Market> dataList = FXCollections.observableArrayList();
 
-    public void addMarkets(ArrayList<Market<? extends Asset>> markets){
+    public void addMarkets(ArrayList<Market> markets){
         this.dataList.addAll(markets);
     }
 
@@ -58,11 +59,28 @@ public class MarketPanelController implements Initializable {
         marketCost.setCellValueFactory(new PropertyValueFactory<>("percentageOperationCost"));
         marketCurrency.setCellValueFactory(new PropertyValueFactory<>("currencyName"));
 
+        tableView.setRowFactory(tv -> {
+            TableRow<Market> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    Market rowData = row.getItem();
+                    try {
+                        popUpInformationAboutTrader(rowData);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return row ;
+        });
+
         App.passMarketsToController(this);
         // java lambdas: (arguments) -> body
         //! The filtering part I've just taken from tutorial.
         //Wrap the ObservableList in a FilteredList (initially display all data) since at the beginning predicate is always true.
-        FilteredList<Market<? extends Asset>> filteredData = new FilteredList<>(dataList, b -> true);
+        FilteredList<Market> filteredData = new FilteredList<>(dataList, b -> true);
+
 
         //Set the filter Predicate whenever the filter changes.
         filterField.textProperty().addListener((observable, oldValue, newValue) ->{
@@ -94,7 +112,7 @@ public class MarketPanelController implements Initializable {
             });
         });
 
-        SortedList<Market<?>> sortedData = new SortedList<>(filteredData);
+        SortedList<Market> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(tableView.comparatorProperty());
 
         tableView.setItems(sortedData);
@@ -108,4 +126,18 @@ public class MarketPanelController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
+
+    public void popUpInformationAboutTrader(Market market) throws IOException{
+        FXMLLoader loader =  new FXMLLoader(TradersPanelController.class.getResource("marketDetailsScene.fxml"));
+        
+        MarketDetailsController controller = new MarketDetailsController(market);
+        loader.setController(controller);
+
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
 }

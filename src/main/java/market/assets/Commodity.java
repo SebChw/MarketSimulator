@@ -3,7 +3,7 @@ package market.assets;
 import market.assets.Currency;
 import market.exchangeRates.ExchangeRatesProvider;
 import java.util.*;
-public class Commodity extends NonCurrencyAsset {
+public class Commodity extends AssetBackedByCurrency {
     private String tradingUnit;
     //Ill read all these informations from ExchangeRatesProvider
     private float currentPrice; // this I will make functions for!

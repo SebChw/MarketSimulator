@@ -22,7 +22,7 @@ import java.time.LocalDate;
 
 
 public class App extends Application{
-    private final static World world = new World();
+    private final static World world = new World("Spice");
     private static LocalDate currentTime = LocalDate.now();
 
     public static void main(String[] args) throws Exception {
@@ -46,14 +46,19 @@ public class App extends Application{
         
         world.addNewCommodity();
         // world.addNewCommodity();
-        world.addNewCompany();
-        //world.addNewHumanInvestor();
+        // world.addNewCompany();
+        
+        // world.addNewCompany();
+        // world.addNewCompany();
+        // world.addNewCompany();
+        world.addNewHumanInvestor();
         world.addNewInvestmentFund();
         // world.addNewCommodityMarket();
-        world.addNewRandomMarket();
+        //world.addNewRandomMarket();
         // world.addNewStockMarket();
-
-        world.testTrade();
+        // world.addNewMarketIndex();
+        // world.addNewDynamicMarketIndex("biggets");
+        // world.addNewDynamicMarketIndex("startup");
         System.out.println("JEJ");
         launch(args);
 
@@ -121,6 +126,12 @@ public class App extends Application{
     public static void addHumanInvestor(){
         world.addNewHumanInvestor();
     }
+    public static void addStaticIndex(){
+        world.addNewMarketIndex();
+    }
+    public static void addDynamicIndex(){
+        world.addNewDynamicMarketIndex();
+    }
     public static void addInvestmentFund(){
         world.addNewInvestmentFund();
     }
@@ -142,11 +153,17 @@ public class App extends Application{
     public static int getNumberOfInvestmentFunds(){
         return world.getNumberOfInvestmentFunds();
     }
-    public static int getNumberOfIndices(){
-        return world.getNumberOfIndices();
+    public static int getNumberOfStaticIndices(){
+        return world.getNumberOfStaticIndices();
+    }
+    public static int getNumberOfDynamicIndices(){
+        return world.getNumberOfDynamicIndices();
     }
     public static Asset getParticularAsset(String name){
         return world.getParticularAsset(name);
+    }
+    public static int getNumberofDynamicIndices(){
+        return world.getNumberOfDynamicIndices();
     }
     
 }

@@ -9,32 +9,29 @@ import java.util.LinkedList;
 public class ExchangeRatesProvider implements AssetObserver{
     private String nameOfBackingAsset;
     private MarketPriceRule marketRule; 
-    private HashMap<String, LinkedList<Float>> rates; // This provides exchange rates of one asset to all other
+    private LinkedList<Float> rates = new LinkedList<Float>(); // This provides exchange rates of one asset to all other
 
 
-    public ExchangeRatesProvider(String nameOfBackingAsset){
+    public ExchangeRatesProvider(String nameOfBackingAsset, float startingPrice){
         this.nameOfBackingAsset = nameOfBackingAsset; // Main asset that Backs everything in our system
-
-        this.rates = new HashMap<String, LinkedList<Float>>();
+        this.updateRate(startingPrice);
     }
 
-    public void updateRate(String nameOfAsset, Float rate){
-        LinkedList<Float> currentRates = this.rates.get(nameOfAsset);
-        if (currentRates == null){
-            currentRates = new LinkedList<Float>();
-        }
-        currentRates.addFirst(rate); // Consider here inserting new rate at the begining so taking it will be O(1). //!Add FIRST METHOD
-        this.rates.put(nameOfAsset, currentRates); // This will suceed either tu put rate for the first time or to update it
+    public void updateRate(Float rate){
+        this.rates.addFirst(rate); // Consider here inserting new rate at the begining so taking it will be O(1). //!Add FIRST METHOD
     }
 
     public String getNameOfBackingAsset(){
         return this.nameOfBackingAsset;
     }
     
-    public float getRate(String nameOfAsset){
-        return this.rates.get(nameOfAsset).getFirst(); //!Consider using GetFirst here and appending new raters at the beginning!
+    public float getRate(){
+        return this.rates.getFirst(); //!Consider using GetFirst here and appending new raters at the beginning!
     }
 
+    public void removeLastRate(){
+        this.rates.removeLast();
+    }
 
     @Override
     public void update(String assetName, int hypeLevel, int amountOfOwners, float AmountInCirculation) {

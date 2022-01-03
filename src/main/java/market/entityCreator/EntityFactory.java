@@ -2,19 +2,28 @@ package market.entityCreator;
 
 import market.traders.*;
 import market.assets.Currency;
-import market.assets.Share;
 import market.assets.Asset;
 import market.assets.Commodity;
 import market.assets.InvestmentFundUnit;
 import market.markets.*;
 import java.util.*;
+import java.util.random.RandomGenerator;
+import market.assets.marketIndex.MarketIndex;
 import market.exchangeRates.ExchangeRatesProvider;
+import market.assets.marketIndex.MarketIndex;
+
+import market.assets.marketIndex.*;
 
 public class EntityFactory {
     private SemiRandomValuesGenerator attributesGenerator = new SemiRandomValuesGenerator();
-    
-    public EntityFactory(){
-       
+    private String mainAsset;
+
+    //We can select it randomly
+    private CompaniesFilter biggestFilter = new BiggestCompaniesFilter();
+    private CompaniesFilter startupsFilter = new StartupsCompaniesFilter();
+
+    public EntityFactory(String mainAsset){
+       this.mainAsset = mainAsset;
     }
 
     public Company createCompany(ArrayList<Currency> currenciesByNow){
@@ -23,10 +32,10 @@ public class EntityFactory {
         HashMap<String, Float> investmentBudget = this.attributesGenerator.getRandomInitialBudget(currenciesByNow);
         String name = company.get("name");
         String ipoDate = company.get("ipoDate");
-        Float ipoShareValue = this.attributesGenerator.getRandomFloatNumber(5000) + 100;
-        float openingPrice = this.attributesGenerator.getRandomFloatNumber(10000) + 100;
-        float profit = this.attributesGenerator.getRandomFloatNumber(10000) + 100;
-        float revenue = this.attributesGenerator.getRandomFloatNumber(5000) + 100;
+        Float ipoShareValue = SemiRandomValuesGenerator.getRandomFloatNumber(5000) + 100;
+        float openingPrice = SemiRandomValuesGenerator.getRandomFloatNumber(10000) + 100;
+        float profit = SemiRandomValuesGenerator.getRandomFloatNumber(10000) + 100;
+        float revenue = SemiRandomValuesGenerator.getRandomFloatNumber(5000) + 100;
 
         Currency registeredCurrency = this.attributesGenerator.getRandomCurrency(currenciesByNow);
 
@@ -63,47 +72,85 @@ public class EntityFactory {
         String tradingUnit = attributes.get("tradingUnit");
         Currency commodityCurrency = this.attributesGenerator.getRandomCurrency(currenciesByNow);
 
-        return new Commodity(name, tradingUnit, commodityCurrency, attributesGenerator.getRandomFloatNumber(6));
+        return new Commodity(name, tradingUnit, commodityCurrency, SemiRandomValuesGenerator.getRandomFloatNumber(6));
     }
-    public Currency createCurrency(ExchangeRatesProvider mainBankRates){
+    public Currency createCurrency(){
         //Creating new currency is strictly linked with creating new ExchengeRates table and also making links between them.
         HashMap<String,String> attributes = this.attributesGenerator.getRandomCurrencyData();
         String name = attributes.get("name");
         HashSet<String> countriesWhereLegal = this.attributesGenerator.getRandomHashSetOfCountriesNames();
 
-        mainBankRates.updateRate(name, attributesGenerator.getRandomFloatNumber(6));
-
-        Currency currency = new Currency(name, countriesWhereLegal, mainBankRates);
+        Currency currency = new Currency(name, countriesWhereLegal, this.mainAsset, SemiRandomValuesGenerator.getRandomFloatNumber(6));
 
         return currency;
     }
 
-    public <T extends Asset> Market<T> createMarket(ArrayList<Currency> currenciesByNow, boolean withIndices, ArrayList<T> assets){
+    public MarketIndex createMarketIndex(ArrayList<Company> companiesByNow){
+        HashMap<String,String> attributes = this.attributesGenerator.getRandomIndexData();
+        String name = attributes.get("name");
+
+        ArrayList<Company> companiesInIndex = new ArrayList<Company>();
+        float cost = 0;
+        for (Company company : companiesByNow) {
+            if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.5){
+                companiesInIndex.add(company);
+                //This should make sense that the more Assets we has in the Unit the more we earn.
+                //Basically Index should work quite similarly
+                cost += company.getShareValue();
+            }
+            
+        }
+        //In case no asset was chosen
+        if (companiesInIndex.isEmpty()){
+            int randomCompanyIndex = attributesGenerator.getRandomArrayIndex(companiesByNow);
+            Company company = companiesByNow.get(randomCompanyIndex);
+            companiesInIndex.add(company);
+            cost += company.getShareValue();
+        }
+
+        return new MarketIndex(name, "Market Index" ,companiesInIndex, this.mainAsset, 1/cost);
+
+    }
+
+    public DynamicMarketIndex createDynamicMarketIndex(ArrayList<Company> companiesByNow, String filterType){
+        HashMap<String,String> attributes = this.attributesGenerator.getRandomIndexData();
+        String name = attributes.get("name");
+        int numberOfCompanies = SemiRandomValuesGenerator.getRandomIntNumber(16) + 5;
+        CompaniesFilter filter = biggestFilter; //By Default it is biggest
+        if (filterType.equals("startup")){
+            filter = startupsFilter;
+        }
+        DynamicMarketIndex index = new DynamicMarketIndex(name, new ArrayList<Company>(companiesByNow), this.mainAsset, 0, filter, numberOfCompanies);
+        index.getMainBankRates().removeLastRate(); // This is done artificially to start with some rate calculated after filtering
+        index.updateIndex();
+
+        return index;
+    }
+    public <T extends Asset> Market createMarket(ArrayList<Currency> currenciesByNow, ArrayList<T> assets, ArrayList<Asset> indices){
         HashMap<String,String> attributes = this.attributesGenerator.getRandomMarketData();
         String name = attributes.get("name");
         String country = attributes.get("country");
         String city = attributes.get("city");
         String address = attributes.get("address");
-        float percentageOperationCost = this.attributesGenerator.getRandomFloatNumber((float)0.1);
+        float percentageOperationCost = SemiRandomValuesGenerator.getRandomFloatNumber((float)0.1);
         
         Currency tradingCurrency = this.attributesGenerator.getRandomCurrency(currenciesByNow);
         
-        HashMap<String, T> availableAssets = new HashMap<String, T>();
+        HashMap<String, Asset> availableAssets = new HashMap<String, Asset>();
         //In general some Market may don't have all asssets from the very beginning. However now I assume all have all assets!.
-        for (T asset : assets) {
+        for (Asset asset : assets) {
             availableAssets.put(asset.getName(), asset);
         }
 
-        if (withIndices){
-            return new MarketWithIndices<T>(name, country, city, address, percentageOperationCost, tradingCurrency, availableAssets); 
+        if (indices != null){
+            //In general some Market may don't have all asssets from the very beginning. However now I assume all have all assets!.
+            for (Asset index : indices) {
+            availableAssets.put(index.getName(), index);
         }
-        return new Market<T>(name, country, city, address, percentageOperationCost, tradingCurrency, availableAssets);
+        }
+        return new Market(name, country, city, address, percentageOperationCost, tradingCurrency, availableAssets);
     }
 
-
-    public Share createShare(Company company){
-        return new Share(company.getName(), attributesGenerator.getRandomIntNumber(50), company, company.getIpoShareValue());
-    }
 
     public InvestmentFundUnit createFundUnit(InvestmentFund issuedBy, ArrayList<Asset> availableAssets) {
        
@@ -113,8 +160,8 @@ public class EntityFactory {
         for (Asset asset : availableAssets) {
             if (asset.getType() == "fund unit") continue;
 
-            if (this.attributesGenerator.getRandomFloatNumber(1) < 0.1){
-                float amountBought = this.attributesGenerator.getRandomFloatNumber(100);
+            if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.1){
+                float amountBought = SemiRandomValuesGenerator.getRandomFloatNumber(100);
                 boughtAssets.put(asset.getName(), amountBought);
                 //This should make sense that the more Assets we has in the Unit the more we earn.
                 //Basically Index should work quite similarly
@@ -125,12 +172,12 @@ public class EntityFactory {
         //In case no asset was chosen
         if (boughtAssets.isEmpty()){
             Asset asset = this.attributesGenerator.getRandomAsset(availableAssets);
-            boughtAssets.put(asset.getName(), this.attributesGenerator.getRandomFloatNumber(100));
+            boughtAssets.put(asset.getName(), SemiRandomValuesGenerator.getRandomFloatNumber(100));
         }
 
-        float fundPercentageProfit = this.attributesGenerator.getRandomFloatNumber((float)0.25);
+        float fundPercentageProfit = SemiRandomValuesGenerator.getRandomFloatNumber((float)0.25);
 
-        return new InvestmentFundUnit(issuedBy.getName(), attributesGenerator.getRandomIntNumber(50), issuedBy, cost +  attributesGenerator.getRandomFloatNumber(100), boughtAssets, fundPercentageProfit);
+        return new InvestmentFundUnit(issuedBy.getName(), SemiRandomValuesGenerator.getRandomIntNumber(50), issuedBy, cost +  SemiRandomValuesGenerator.getRandomFloatNumber(100), boughtAssets, fundPercentageProfit);
 
     }
     
