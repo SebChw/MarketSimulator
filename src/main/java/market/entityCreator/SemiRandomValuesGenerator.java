@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.LinkedList;
-
+import market.App;
 import market.assets.Asset;
 import market.assets.Currency;
+import market.traders.Trader;
+import market.world.World;
 
 public class SemiRandomValuesGenerator {
     private String[] commodityNames = {"Cereal","Silver","Gas", "Oil", "Copper"};
@@ -29,8 +31,10 @@ public class SemiRandomValuesGenerator {
     private int[] years = {2000,2005,2010,2020,2015};
 
     private static Random randomGenerator = new Random();
+    private World world;
 
-    public SemiRandomValuesGenerator(){       
+    public SemiRandomValuesGenerator(World world){
+        this.world = world;       
     }
 
     public HashMap<String,String> getRandomCompanyData(){
@@ -116,11 +120,18 @@ public class SemiRandomValuesGenerator {
 
     }
     public static float getRandomFloatNumber(float multiplier){
-        return (float) ((randomGenerator.nextFloat() + 0.1) * multiplier); // nextFloat returns a floating point number between [0.0, 1.0]
+        return (float) ((randomGenerator.nextFloat()) * multiplier); // nextFloat returns a floating point number between [0.0, 1.0]
     }
 
+    public static float getRandomFloatNumber(float multiplier, float offset){
+        return (float) ((randomGenerator.nextFloat() + offset) * multiplier); // nextFloat returns a floating point number between [0.0, 1.0]
+    }
+ 
     public static int getRandomIntNumber(int max){
         return randomGenerator.nextInt(max); // nextFloat returns a floating point number between [0.0, 1.0]
+    }
+    public static float getFromNormal(float mean, float std){
+        return (float) (randomGenerator.nextGaussian() * std + mean);
     }
 
     public void getRandomValueAndPutToHashMap(String[] array, String key,  HashMap<String,String> randomAttributes){
@@ -134,17 +145,11 @@ public class SemiRandomValuesGenerator {
         randomAttributes.put(key, array[name_idx]);
     }
 
-    public HashMap<String, Float> getRandomInitialBudget(ArrayList<Currency> currenciesByNow){
-        HashMap<String, Float> initialBudget = new HashMap<String, Float>();
-
-        for (Currency currency : currenciesByNow) {
-            initialBudget.put(currency.getName(), getRandomFloatNumber(1000));
-        }
-
-        return initialBudget;
+    public static int getRandomArrayIndex(ArrayList<?> array){
+        return randomGenerator.nextInt(array.size());
     }
 
-    public int getRandomArrayIndex(ArrayList<?> array){
+    public static int getRandomArrayIndex(List<?> array){
         return randomGenerator.nextInt(array.size());
     }
 
@@ -172,6 +177,16 @@ public class SemiRandomValuesGenerator {
     public Asset getRandomAsset(ArrayList<? extends Asset> assetsByNow){
         int randomAssetIndex = this.getRandomArrayIndex(assetsByNow);
         return assetsByNow.get(randomAssetIndex);
+    }
+
+    public boolean getBearIndicator(){
+        float bullProbability = world.getBullProbability();
+        boolean bearIndicator = true;
+        if (getRandomFloatNumber(1) < bullProbability){
+            bearIndicator = false;
+        }
+
+        return bearIndicator;
     }
     
 }

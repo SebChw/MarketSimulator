@@ -1,28 +1,30 @@
 package market.assets;
 
 import java.util.ArrayList;
+
+import javafx.beans.property.FloatProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import market.observers.*;
 import market.exchangeRates.ExchangeRatesProvider;
+import market.priceRules.*;
 /**
  * This is root class for all assets available in the market
  * 
  */
-public abstract class Asset implements AssetSubject{
+public abstract class Asset{
     private String name;
-    private float amountInCirculation;
+    private volatile SimpleFloatProperty amountInCirculation;
     private String type;
-    private int hypeLevel; // maybe MarketPriceRule will be dependend on that
-    private int amountOfOwners; // maybe MarkerPriceRule will be dependent on that
-    private ArrayList<AssetObserver> observers; // Abservers that check what's happening with that asset to make some changes about it
+    private volatile SimpleFloatProperty hypeLevel = new SimpleFloatProperty(0); // maybe MarketPriceRule will be dependend on that
+    private volatile SimpleIntegerProperty amountOfOwners = new SimpleIntegerProperty(0); // maybe MarkerPriceRule will be dependent on that
     private ExchangeRatesProvider mainBankRates;
 
     public Asset(String name, String type, float amountInCirculation, String backingAsset, float startingRate){
         this.name = name;
         this.type = type;
-        this.amountInCirculation = amountInCirculation;
-        this.hypeLevel = 0; // I think these should be set to 0 at the beginning 
-        this.amountOfOwners = 0; // I think these should be set to 0 at the beginning
-        this.observers = new ArrayList<AssetObserver>();
+        this.amountInCirculation = new SimpleFloatProperty(amountInCirculation);
         this.mainBankRates = new ExchangeRatesProvider(backingAsset, startingRate);
     }   
     public String getName(){
@@ -31,13 +33,14 @@ public abstract class Asset implements AssetSubject{
     public String getType(){
         return this.type;
     }
-    public float getAmountInCirculation(){
+    public SimpleFloatProperty amountInCirculationProperty(){
         return this.amountInCirculation;
     }
-    public int getAmountOfOwners(){
+    public IntegerProperty amountOfOwnersProperty(){
         return this.amountOfOwners;
     }
-    public int getHypeLevel(){
+    
+    public SimpleFloatProperty hypeLevelProperty(){
         return this.hypeLevel;
     }
     
@@ -45,8 +48,24 @@ public abstract class Asset implements AssetSubject{
 
     }
 
-    public void increaseAmountInCirculation(int amount){
-        this.amountInCirculation += amount;
+    public synchronized void changeAmountInCirculation(float amount){
+        float newValue = this.amountInCirculation.get() + amount;
+        this.mainBankRates.updateWRT(newValue - this.amountInCirculation.get() , "amount");
+        this.amountInCirculation.set(newValue);
+    }
+
+    public synchronized void changeHypeLevel(float amount){
+        float newValue = this.hypeLevel.get() + amount;
+        this.mainBankRates.updateWRT(newValue - this.hypeLevel.get() , "hypeLevel");
+        this.hypeLevel.set(newValue);
+        
+    }
+
+    public synchronized void changeAmountOfOwners(int amount){
+        int newValue = this.amountOfOwners.get() + amount;
+        this.mainBankRates.updateWRT(newValue - this.amountOfOwners.get(), "owners");
+        this.amountOfOwners.set(newValue);
+        
     }
 
     @Override 
@@ -69,7 +88,9 @@ public abstract class Asset implements AssetSubject{
     public float getCurrentRate() {
         return this.mainBankRates.getRate();
     }
-
+    public void updateRate(){
+        mainBankRates.updateRate();
+    }
     public float calculateThisToDifferent(Asset tradedAsset, float amount){
         //Here I could just do division However I think this is more clear and only up to 2 operations more
         //Also THis is more beneficial It I have some more complicated Assets Like marketIndex for whom calculating 
@@ -80,23 +101,6 @@ public abstract class Asset implements AssetSubject{
         return this.calculateMainToThis(tradedAsset.calculateThisToMain(amount));
     };
 
-    @Override
-    public void notifyObservers() {
-        for (AssetObserver assetObserver : observers) {
-            assetObserver.update(this.name, this.hypeLevel, this.amountOfOwners, this.amountInCirculation);
-        }
-    }
-
-    @Override
-    public void registerObserver(AssetObserver observer) {
-        this.observers.add(observer); // Now we will notify that observer
-    }
-
-    @Override
-    public void removeObserver(AssetObserver observer) {
-        this.observers.remove(observer);
-        
-    }
     
 }
 

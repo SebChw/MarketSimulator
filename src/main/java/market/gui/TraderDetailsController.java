@@ -24,6 +24,7 @@ import java.util.Map;
 import market.App;
 
 import market.traders.Trader;
+import market.world.World;
 
 public class TraderDetailsController implements Initializable{
     private Stage stage;
@@ -37,7 +38,7 @@ public class TraderDetailsController implements Initializable{
     @FXML private TableColumn<Map.Entry<String, Float>, String> amount;
     @FXML private GridPane traderDetails;
     private ObservableList<Map.Entry<String, Float>> dataList = FXCollections.observableArrayList();
-
+   
     public TraderDetailsController(Trader trader){
         this.trader = trader;
         dataList.addAll(this.trader.getInvestmentBudget().entrySet());

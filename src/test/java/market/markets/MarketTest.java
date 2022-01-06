@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import market.traders.HumanInvestor;
 import market.traders.Trader;
+import market.world.World;
 import market.assets.*;
 import java.util.HashMap;
 import market.exchangeRates.*;
@@ -13,6 +14,7 @@ public class MarketTest {
     @Test
     //IF THIS TEST IS PASSED THEN MECHANICS OF SELLING AND BUYING TRADES WORKS WELL IN ALL SCENARIOS I COULD IMAGINE!
     void testBuyAndSell() {
+        World world = new World("nice");
         Currency cur1 = new Currency("zloty", null, "pieczarki", (float)2);
         Currency cur2 = new Currency("yang", null, "pieczarki", (float)0.5);
         Commodity com1 = new Commodity("zloto", null, cur2, (float)5);
@@ -24,15 +26,15 @@ public class MarketTest {
         availableCommodities.put(com1.getName(), com1);
         availableCommodities.put(com2.getName(), com2);
 
-        Market market = new Market(null,null,null,null, (float)0.1,cur1, availableCurrencies);
-        Market market2 = new Market(null,null,null,null, (float)0.1,cur2, availableCommodities);
+        Market market = new Market(null,null,null,null, (float)0.1,cur1, availableCurrencies, null);
+        Market market2 = new Market(null,null,null,null, (float)0.1,cur2, availableCommodities ,null);
         HashMap<String,Float> investmentBudget = new HashMap<String,Float>();
         investmentBudget.put("zloty", (float)10);
         investmentBudget.put("yang", (float)10);
         investmentBudget.put("zloto", (float)10);
         investmentBudget.put("srebro", (float)10);
 
-        Trader trader = new HumanInvestor("123123", investmentBudget,null,null);
+        Trader trader = new HumanInvestor("123123", investmentBudget,null,null,true, null);
         
 
         market.buy(trader, cur2 , 1); // I want to get 1 yang from this market. In Market Trading Currency is zloty so
@@ -54,7 +56,7 @@ public class MarketTest {
         investmentBudget.remove("zloto");
         investmentBudget.remove("srebro");
         investmentBudget.put("zloty", (float)11);
-        App.addCurrency(cur1); // For this information I need to have that currency available in the world So that I can exchange it
+        world.addNewCurrency(cur1); // For this information I need to have that currency available in the world So that I can exchange it
         //Unfortunatelly I don;t know the order of iterations within map So I need to leave only one thing here
         //Okay So I want to buy in the market where trading Currency is yang but I only have zloty.
         //And I want 1 zloto so I need 5 yangs + provision -> 5,5 So I need 11 zloty So I should have 0 zloty and It should dissapear from the budget!
@@ -67,8 +69,8 @@ public class MarketTest {
         investmentBudget.put("zloto", (float)1);
         investmentBudget.put("srebro", (float)1);
 
-        App.addCommodity(com1);
-        App.addCommodity(com2);
+        world.addNewCommodity(com1);
+        world.addNewCommodity(com2);
 
         //Okay So I want to buy yangs And I have only zloto and srebro Ill recalculate it into zloty and then buy yangs.
         //overall this operation costs 110 zloty
@@ -86,7 +88,7 @@ public class MarketTest {
         //I have 5 yangs and I want to buy 3 yangs. On that market I cant buy with zlotys.
         //Cost of getting 3 yangs is 12 zloty + provision = 13.2 .
         //So I exchange 5 yangs -> 20 zloty So I should be left with 6.8 zloty and 3 yangs 
-        App.addCurrency(cur2);
+        world.addNewCurrency(cur2);
         market.buy(trader, cur2, 3);
         assertEquals((float)3, investmentBudget.get("yang"));
         assertEquals((float)6.8, investmentBudget.get("zloty"));

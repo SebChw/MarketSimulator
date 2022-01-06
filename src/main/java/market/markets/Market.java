@@ -11,10 +11,11 @@ import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import market.traders.Trader;
-import market.tradingSystems.Trade;
+import market.world.World;
 import market.assets.ProofOfPurchase;
 import market.assets.Asset;
 import market.App;
+import market.entityCreator.SemiRandomValuesGenerator;
 
 public class Market {
     private String name;
@@ -29,11 +30,10 @@ public class Market {
 
     private HashMap<Trader, ArrayList<ProofOfPurchase>> clients = new HashMap<Trader, ArrayList<ProofOfPurchase>>();
     private HashMap<String, Asset> availableAssets = new HashMap<String, Asset>(); // Maybe make this justa HashSet ?
-    
-    private Trade tradingSystem;
+    private World world;
 
     public Market(String name, String country, String city, String address, 
-                float percentageOperationCost, Currency tradingCurrency, HashMap<String, Asset> availableAssets){
+                float percentageOperationCost, Currency tradingCurrency, HashMap<String, Asset> availableAssets, World world){
         this.name=name;
         this.country=country;
         this.city=city;
@@ -41,6 +41,7 @@ public class Market {
         this.percentageOperationCost=percentageOperationCost;
         this.tradingCurrency=tradingCurrency;
         this.availableAssets = availableAssets;
+        this.world = world;
 
     }
 
@@ -54,18 +55,13 @@ public class Market {
         String tradingCurrencyName = this.tradingCurrency.getName();
         float cost = this.tradingCurrency.calculateDifferentToThis(wantedAsset, amount); // how much of our trading currency we must pay for this asset!
         cost += cost*this.percentageOperationCost; // we need to increase the cost
-        if (traderInvestmentBudget.containsKey(tradingCurrencyName) && traderInvestmentBudget.get(tradingCurrencyName) >= cost){
-            float tradingCurrencyAmount = traderInvestmentBudget.get(tradingCurrencyName);
-            Asset asset = availableAssets.get(wantedAsset.getName());
-           
-            if (cost <= tradingCurrencyAmount){
-                trader.addBudget(wantedAsset.getName(), amount);
-                trader.subtractBudget(tradingCurrencyName, cost);
-            }
 
+        if (traderInvestmentBudget.containsKey(tradingCurrencyName) && traderInvestmentBudget.get(tradingCurrencyName) >= cost){
+            trader.addBudget(wantedAsset, amount);
+            trader.subtractBudget(tradingCurrency, cost);
         }
         else {
-            System.out.println("You don't have enough" + this.tradingCurrency.getName() + " We will exchange for free all your assets to our trading Currency until you have enough!");
+            System.out.println("You don't have enough " + this.tradingCurrency.getName() + " We will exchange for free all your assets to our trading Currency until you have enough!");
             float tradingCurrencyAmount = 0;
             HashMap<String, Float> traderInvestmentBudgetCopy = new HashMap<String, Float>(trader.getInvestmentBudget());
             Iterator<Map.Entry<String, Float>> it = traderInvestmentBudgetCopy.entrySet().iterator(); //!Here I need to copy this as Im changing it within loop
@@ -73,23 +69,26 @@ public class Market {
             while (tradingCurrencyAmount < cost && it.hasNext()){
                 budget = it.next();
                 //!These two operations must be done in that order as at first I may subtract and then remove item from the dictonary!!!
-                tradingCurrencyAmount += this.tradingCurrency.calculateDifferentToThis(App.getParticularAsset(budget.getKey()), budget.getValue());
-                trader.subtractBudget(budget.getKey(), budget.getValue()); // I take all money he has here! So it is equal to removing this entry from HashMap
+                tradingCurrencyAmount += this.tradingCurrency.calculateDifferentToThis(world.getParticularAsset(budget.getKey()), budget.getValue());
+                trader.subtractBudget(world.getParticularAsset(budget.getKey()), budget.getValue()); // I take all money he has here! So it is equal to removing this entry from HashMap
             }
+
+            //After leaving this loop we still has 3 different options 
             if (tradingCurrencyAmount > cost){
                 tradingCurrencyAmount -= cost;
-                trader.addBudget(wantedAsset.getName(), amount);
-                trader.addBudget(this.tradingCurrency.getName(), tradingCurrencyAmount); // It can't be null here! I'm returning back what has left in trading Currency
+                trader.addBudget(wantedAsset, amount);
+                trader.addBudget(this.tradingCurrency, tradingCurrencyAmount); // It can't be null here! I'm returning back what has left in trading Currency
             }
             else if (tradingCurrencyAmount < cost){
                 System.out.println("You still don't have enough money. We will exchange all you have for the chosen asset");
                 //Now I treat tradingCurrencyAmount as cost + provision. So I need to get cost back
                 tradingCurrencyAmount = tradingCurrencyAmount / (1 + this.percentageOperationCost);
-                trader.addBudget(wantedAsset.getName(), this.tradingCurrency.calculateThisToDifferent(wantedAsset, tradingCurrencyAmount));
+                amount = this.tradingCurrency.calculateThisToDifferent(wantedAsset, tradingCurrencyAmount);
+                trader.addBudget(wantedAsset, amount);
             }
             else{
                 //If they are equal I just add wantedAsset
-                trader.addBudget(wantedAsset.getName(), amount);
+                trader.addBudget(wantedAsset, amount);
             }
         }
     }
@@ -100,8 +99,8 @@ public class Market {
         if(traderInvestmentBudget.containsKey(soldAsset.getName()) && traderInvestmentBudget.get(soldAsset.getName()) >= amount &&this.availableAssets.containsKey(soldAsset.getName())){
             float income = this.tradingCurrency.calculateDifferentToThis(soldAsset, amount);
             income = income / (1 + this.percentageOperationCost);
-            trader.addBudget(this.tradingCurrency.getName(), income);
-            trader.subtractBudget(soldAsset.getName(), amount); 
+            trader.addBudget(this.tradingCurrency, income);
+            trader.subtractBudget(soldAsset, amount);
         }
         else{
             System.out.println("Either you don't have asset to be sold or this Market does not support it!");

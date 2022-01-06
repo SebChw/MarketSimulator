@@ -2,13 +2,19 @@ package market.exchangeRates;
 
 import java.util.HashMap;
 import java.util.ArrayList;
-import market.marketRules.MarketPriceRule;
-import market.observers.AssetObserver;
+
+import market.priceRules.*;
+
 import java.util.LinkedList;
 
-public class ExchangeRatesProvider implements AssetObserver{
+import javafx.scene.chart.XYChart;
+
+public class ExchangeRatesProvider {
+
     private String nameOfBackingAsset;
-    private MarketPriceRule marketRule; 
+    private AssetPriceRule assetPriceRule = new BasicAssetPriceRule();
+    private float accumulatedRateChange = 0;
+    private int numberOfStoredRates = 0;
     private LinkedList<Float> rates = new LinkedList<Float>(); // This provides exchange rates of one asset to all other
 
 
@@ -19,8 +25,22 @@ public class ExchangeRatesProvider implements AssetObserver{
 
     public void updateRate(Float rate){
         this.rates.addFirst(rate); // Consider here inserting new rate at the begining so taking it will be O(1). //!Add FIRST METHOD
+        numberOfStoredRates += 1;
     }
-
+    public void updateRate(){
+        //! DEFINE RULES OF UPDATING MARKET INDICES and INVESTMENT FUNDS UNITS!
+        float currentRate = getRate();
+        if (currentRate < 1 && accumulatedRateChange != 0){
+            float updated = 1/(1/currentRate - 1/accumulatedRateChange);
+            if (updated > 0){
+                updateRate(updated);
+            }
+        }
+        else{
+            updateRate(currentRate + accumulatedRateChange);
+        }
+        accumulatedRateChange = 0;
+    }
     public String getNameOfBackingAsset(){
         return this.nameOfBackingAsset;
     }
@@ -33,15 +53,36 @@ public class ExchangeRatesProvider implements AssetObserver{
         this.rates.removeLast();
     }
 
-    @Override
-    public void update(String assetName, int hypeLevel, int amountOfOwners, float AmountInCirculation) {
-        if (assetName == this.nameOfBackingAsset){
-            //Do for loop over all assets here
-            //use this class updateRate function!
+    public void updateWRT(float change, String wrt){
+        //acumulate 
+        float ratioDifference;
+        if (wrt.equals("amount")) ratioDifference = assetPriceRule.updateWRTAmountInCirculation(change);
+        else if (wrt.equals("hype")) ratioDifference = assetPriceRule.updateWRTHype(change);
+        else ratioDifference = assetPriceRule.updateWRTAmountOfOwners(change);
+        //System.out.println(ratioDifference);
+        this.accumulatedRateChange += ratioDifference;
+        
+    }
+
+    public void fillAssetSeries(XYChart.Series series, String scale, int longestPlot){
+        ArrayList<Float> rates = new ArrayList<Float>(this.rates);
+        int difference = longestPlot - numberOfStoredRates;
+        if (scale.equals("normal")){
+            for(int i = 0; i < numberOfStoredRates; i++){
+                series.getData().add(new XYChart.Data(numberOfStoredRates - i - 1 + difference, 1/rates.get(i)));
+            }
         }
         else {
-            //Here we just update asset that we are concerned about
+            float startingPoint = 1/rates.get(numberOfStoredRates-1);
+            for(int i = 0; i < numberOfStoredRates; i++){
+                series.getData().add(new XYChart.Data(numberOfStoredRates - i - 1 + difference, 1/rates.get(i)/startingPoint));
+            }
         }
         
     }
+
+    public int getNumberOfStoredRates() {
+        return this.numberOfStoredRates;
+    }
+    
 }

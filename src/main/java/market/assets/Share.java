@@ -16,9 +16,9 @@ public class Share extends AssetBackedByCurrency{
         
     }
     
-    public void increaseShares(int amount){
+    public void increaseShares(float amount){
         this.availableShares += amount;
-        this.increaseAmountInCirculation(amount);
+        this.changeAmountInCirculation(amount);
     }
 
     @Override

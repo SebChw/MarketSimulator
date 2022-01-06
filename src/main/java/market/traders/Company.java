@@ -12,6 +12,7 @@ import market.assets.Share;
 import market.entityCreator.SemiRandomValuesGenerator;
 import java.time.LocalDate;
 import market.observers.CompanyObserver;
+import market.world.World;
 public class Company extends Trader implements CompanySubject{
     private LocalDate ipoDate;
     private Float ipoShareValue; // This is rather attribute of share!
@@ -34,8 +35,8 @@ public class Company extends Trader implements CompanySubject{
     //Probably it is better to have it only in one place so that consistency is higher. Now issuing shares is no problem.
 
     public Company(String tradingIdentifier, HashMap<String, Float> investmentBudget, String name,
-                String ipoDate, float ipoShareValue, float openingPrice, float profit, float revenue, Currency registeredCurrency){
-        super(tradingIdentifier, investmentBudget, name, "Company");
+                String ipoDate, float ipoShareValue, float openingPrice, float profit, float revenue, Currency registeredCurrency, boolean isBear, World world){
+        super(tradingIdentifier, investmentBudget, name, "Company", isBear, world);
         this.ipoDate = LocalDate.parse(ipoDate);
         this.openingPrice = openingPrice;
         this.currentPrice = openingPrice;
@@ -112,7 +113,7 @@ public class Company extends Trader implements CompanySubject{
         for (int i = 0; i < filledDetails.length; i++) {
             Label l = new Label();
             l.setText(moreDetails[i] + filledDetails[i]);
-            traderDetails.add(l, 0, i + 3);
+            traderDetails.add(l, 0, i + 4);
         }
         
     }

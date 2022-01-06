@@ -39,5 +39,9 @@ public class MarketIndex extends Asset{
         }
         return 1/ratio;
     }
+
+    public void updateRate(){
+        this.getMainBankRates().updateRate(calculateRatio());
+    }
     
 }

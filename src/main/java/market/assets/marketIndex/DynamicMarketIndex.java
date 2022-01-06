@@ -25,6 +25,6 @@ public class DynamicMarketIndex extends MarketIndex implements CompanyObserver{
     public void updateIndex(){
         companiesFilter.filterCompanies(this.getCompanies(), this.companiesToUpdate, maxNumOfCompanies);
 
-        this.getMainBankRates().updateRate(calculateRatio());
+        updateRate();
     }
 }
