@@ -1,6 +1,7 @@
 package market.assets.marketIndex;
 
 import market.assets.Asset;
+import market.entityCreator.SemiRandomValuesGenerator;
 import market.exchangeRates.ExchangeRatesProvider;
 import market.traders.Company;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.LinkedList;
 
 public class MarketIndex extends Asset{
     private ArrayList<Company> companies;
-
+    private int availableIndices = 0;
     public MarketIndex(String name, String type, ArrayList<Company> companies, String backingAsset, float startingRate) {
         super(name, type, 0, backingAsset, startingRate);
         this.companies = companies;
@@ -42,6 +43,29 @@ public class MarketIndex extends Asset{
 
     public void updateRate(){
         this.getMainBankRates().updateRate(calculateRatio());
+    }
+
+    public float getPossibleAmount(){
+        return 1;
+    }
+
+    public float getPossibleAmount(float amount){
+        return SemiRandomValuesGenerator.getRandomIntNumber((int)amount);
+    }
+    @Override
+    public synchronized boolean canBeBought(float amount){
+        ArrayList<Company> checkedCompanies = new ArrayList<Company>(companies.size());
+        for (Company company : companies) {
+            if (!company.getShare().canBeBought(amount)) {
+                for (Company unfreezedCompany : checkedCompanies) {
+                    unfreezedCompany.getShare().unfreeze(amount);
+                }
+                return false;
+            }
+            else checkedCompanies.add(company);
+        }
+        System.out.println("You can't buy this Index as this would lead to Bigger amountInCirculation of Share than available");
+        return true;
     }
     
 }

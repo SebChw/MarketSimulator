@@ -142,18 +142,24 @@ public class EntityFactory {
         Currency tradingCurrency = this.attributesGenerator.getRandomCurrency(currenciesByNow);
         
         HashMap<String, Asset> availableAssets = new HashMap<String, Asset>();
+    
         //In general some Market may don't have all asssets from the very beginning. However now I assume all have all assets!.
         for (Asset asset : assets) {
             availableAssets.put(asset.getName(), asset);
+            
         }
 
         if (indices != null){
             //In general some Market may don't have all asssets from the very beginning. However now I assume all have all assets!.
             for (Asset index : indices) {
             availableAssets.put(index.getName(), index);
+            }
+            return new MarketWithIndices(name, country, city, address, percentageOperationCost, tradingCurrency, availableAssets, this.world);
         }
+        else {
+            return new Market(name, country, city, address, percentageOperationCost, tradingCurrency, availableAssets, this.world);
         }
-        return new Market(name, country, city, address, percentageOperationCost, tradingCurrency, availableAssets, this.world);
+        
     }
 
 

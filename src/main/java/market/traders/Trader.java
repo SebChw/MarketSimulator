@@ -45,13 +45,21 @@ public class Trader  implements Runnable{
         
         if (operation == "buy") {
             ArrayList<Asset> availableAssets = market.getAvailableAssets();
-            market.buy(this, availableAssets.get(SemiRandomValuesGenerator.getRandomArrayIndex(availableAssets)), 100);
+            Asset chosenAsset = availableAssets.get(SemiRandomValuesGenerator.getRandomArrayIndex(availableAssets));
+            market.buy(this, chosenAsset, chosenAsset.getPossibleAmount());
         } else{
             List<Asset> availableAssets = market.getAvailableAssets().stream()
                                 .filter(a -> this.investmentBudget.containsKey(a.getName())).collect(Collectors.toList());
             if (!availableAssets.isEmpty()) {
                 Asset chosenAsset = availableAssets.get(SemiRandomValuesGenerator.getRandomArrayIndex(availableAssets));
-                float chosenAmount = investmentBudget.get(chosenAsset.getName()) * SemiRandomValuesGenerator.getRandomFloatNumber(1);
+
+                if(Objects.isNull(investmentBudget.get(chosenAsset.getName()))) return;
+                if (investmentBudget.get(chosenAsset.getName()) == 0){
+                    investmentBudget.remove(chosenAsset.getName());
+                    return;
+                } 
+                
+                float chosenAmount = chosenAsset.getPossibleAmount(investmentBudget.get(chosenAsset.getName()));
                 market.sell(this, chosenAsset, chosenAmount);
             }
         }   
@@ -117,6 +125,9 @@ public class Trader  implements Runnable{
         else{
             currentBudget -= amount;
             if (currentBudget < 0.1){
+                System.out.println("Removing from budget: " + assetName);
+                //!This may lead to bug with shares
+                amount += currentBudget; // Since I'm removing it from trader I also should remove same amount from circulation!
                 this.investmentBudget.remove(assetName);
             }
             else{

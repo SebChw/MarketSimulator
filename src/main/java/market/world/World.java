@@ -86,9 +86,6 @@ public class World {
     public void addNewCurrency(Currency cur){
         this.currencies.add(cur);
         this.allAssets.put(cur.getName(), cur);
-
-        objectCounter.changeNumberOfCurrencies(1);
-
     }
 
     public Commodity addNewCommodity(){
@@ -104,7 +101,6 @@ public class World {
     public void addNewCommodity(Commodity com){
         this.commodities.add(com);
         this.allAssets.put(com.getName(), com);
-        objectCounter.changeNumberOfCommodities(1);
     }
 
     public void addAssetToMarkets(Asset asset){ 
@@ -114,6 +110,8 @@ public class World {
             }
         }
     }
+
+    
     public Company addNewCompany(){
         Company company = null;
         //In that moment we should create Share object too!
@@ -172,13 +170,11 @@ public class World {
 
             if (uniformNumber < 0.33){
                 market = this.entityFactory.createMarket(this.currencies, this.currencies, null);
-                market.setAssetType(this.currencies.get(0).getType());
                 this.currencyMarkets.add(market);
                 this.allMarkets.add(market);
             }
             else if (uniformNumber < 0.665){
                 market = this.entityFactory.createMarket(this.currencies, this.commodities, null);
-                market.setAssetType(this.commodities.get(0).getType());
                 this.commodityMarkets.add(market);
                 this.allMarkets.add(market);
             }
@@ -187,7 +183,6 @@ public class World {
                 allIndices.addAll(this.marketIndices);
                 allIndices.addAll(this.dynamicMarketIndices);
                 market = this.entityFactory.createMarket(this.currencies, this.shares, allIndices);
-                market.setAssetType(this.shares.get(0).getType());
                 this.stockMarkets.add(market);
                 this.allMarkets.add(market);
             }
@@ -211,7 +206,7 @@ public class World {
         this.marketIndices.add(marketIndex);
         this.allAssets.put(marketIndex.getName(), marketIndex);
         objectCounter.changeNumberOfIndices(1);
-
+        addAssetToMarkets(marketIndex);
         return marketIndex;
     }
 
@@ -229,7 +224,7 @@ public class World {
         this.dynamicMarketIndices.add(marketIndex);
         this.allAssets.put(marketIndex.getName(), marketIndex);
         objectCounter.changeNumberOfDynamicIndices(1);
-
+        addAssetToMarkets(marketIndex);
         return marketIndex;
 
     }
@@ -305,5 +300,8 @@ public class World {
             asset.updateRate();
             //asset.changeAmountOfOwners(1);
         }
+    }
+    public void addNewShare(Share share){
+        this.allAssets.put(share.getName(), share);
     }
 }

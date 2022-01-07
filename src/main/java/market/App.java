@@ -15,16 +15,14 @@ import javafx.application.Platform;
 import market.traders.Trader;
 import javafx.concurrent.Task;
 
-//! WE MUST HAVE SOME SENSE OF TIME!!!
-
-//! If I choose two assets to be plotted then I have percentage of the value wrt the base value. 
+//!THE PROBLEM OF NEGATIVE AMOUNT IN CIRCULATION EMERGES AS SOMEHOW ASSET CAN HAVE NEGATIVE RATIO!
 
 //Create one window with more tables!
 public class App extends Application {
     //alternative -> when creating scene pass a World as a paramter
     public static boolean isRunning = true;
     public static void main(String[] args) throws Exception {
-        
+        System.out.println((int)(0.9f));
         launch(args);
 
     }

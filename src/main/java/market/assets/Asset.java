@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import market.observers.*;
 import market.exchangeRates.ExchangeRatesProvider;
 import market.priceRules.*;
+import market.entityCreator.SemiRandomValuesGenerator;
 /**
  * This is root class for all assets available in the market
  * 
@@ -90,6 +91,18 @@ public abstract class Asset{
     }
     public void updateRate(){
         mainBankRates.updateRate();
+    }
+    public boolean canBeBought(float amount){
+        return true;
+    }
+    public void unfreeze(float howMuch){
+
+    }
+    public float getPossibleAmount(){
+        return 1000 * SemiRandomValuesGenerator.getRandomFloatNumber(1);
+    }
+    public float getPossibleAmount(float amount){
+        return amount * SemiRandomValuesGenerator.getRandomFloatNumber(1);
     }
     public float calculateThisToDifferent(Asset tradedAsset, float amount){
         //Here I could just do division However I think this is more clear and only up to 2 operations more

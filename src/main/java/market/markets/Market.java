@@ -43,11 +43,16 @@ public class Market {
         this.availableAssets = availableAssets;
         this.world = world;
 
+        this.assetType = world.getParticularAsset(availableAssets.keySet().iterator().next()).getType();
+
     }
 
     public void buy(Trader trader, Asset wantedAsset, float amount){
         if (!this.availableAssets.containsKey(wantedAsset.getName())){
             System.out.println("We don't have such asset here!");
+            return;
+        }
+        if(!wantedAsset.canBeBought(amount)){
             return;
         }
         //!Trading currencies and trading commodities is a little bit different! Thats why I need that interface
@@ -58,10 +63,10 @@ public class Market {
 
         if (traderInvestmentBudget.containsKey(tradingCurrencyName) && traderInvestmentBudget.get(tradingCurrencyName) >= cost){
             trader.addBudget(wantedAsset, amount);
-            trader.subtractBudget(tradingCurrency, cost);
+            trader.subtractBudget(tradingCurrency, cost); //! This yield to negative Amount in circulation of an asset as we Subtract more of it then we possible bought previously!!.
         }
         else {
-            System.out.println("You don't have enough " + this.tradingCurrency.getName() + " We will exchange for free all your assets to our trading Currency until you have enough!");
+            //System.out.println("You don't have enough " + this.tradingCurrency.getName() + " We will exchange for free all your assets to our trading Currency until you have enough!");
             float tradingCurrencyAmount = 0;
             HashMap<String, Float> traderInvestmentBudgetCopy = new HashMap<String, Float>(trader.getInvestmentBudget());
             Iterator<Map.Entry<String, Float>> it = traderInvestmentBudgetCopy.entrySet().iterator(); //!Here I need to copy this as Im changing it within loop
@@ -75,19 +80,22 @@ public class Market {
 
             //After leaving this loop we still has 3 different options 
             if (tradingCurrencyAmount > cost){
+                //Enough Money!
                 tradingCurrencyAmount -= cost;
                 trader.addBudget(wantedAsset, amount);
                 trader.addBudget(this.tradingCurrency, tradingCurrencyAmount); // It can't be null here! I'm returning back what has left in trading Currency
             }
             else if (tradingCurrencyAmount < cost){
-                System.out.println("You still don't have enough money. We will exchange all you have for the chosen asset");
+                //System.out.println("You still don't have enough money. We will exchange all you have for the chosen asset");
                 //Now I treat tradingCurrencyAmount as cost + provision. So I need to get cost back
                 tradingCurrencyAmount = tradingCurrencyAmount / (1 + this.percentageOperationCost);
-                amount = this.tradingCurrency.calculateThisToDifferent(wantedAsset, tradingCurrencyAmount);
-                trader.addBudget(wantedAsset, amount);
+                
+                float newAmount = this.tradingCurrency.calculateThisToDifferent(wantedAsset, tradingCurrencyAmount);
+                wantedAsset.unfreeze(amount-newAmount); //! For sure at this moment amount > newAmount
+                trader.addBudget(wantedAsset, newAmount);
             }
             else{
-                //If they are equal I just add wantedAsset
+                //If they are equal I just add wantedAsset -> Enough money
                 trader.addBudget(wantedAsset, amount);
             }
         }
@@ -138,15 +146,13 @@ public class Market {
         return new ArrayList<Asset>(this.availableAssets.values());
     }
 
+    public HashMap<String, Asset> getAvailableAssetsHashMap(){
+        return this.availableAssets;
+    }
+
     public void addNewAsset(Asset asset){
         if (asset.getType().equals(this.assetType)){
             this.availableAssets.put(asset.getName(), asset);
-        }
-    }
-
-    public void addNewMarketIndex(Asset marketIndex){
-        if (marketIndex.getType().equals(this.assetType)){
-            this.availableAssets.put(marketIndex.getName(), marketIndex);
         }
     }
 

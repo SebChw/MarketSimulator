@@ -30,19 +30,18 @@ public class ExchangeRatesProvider {
     public void updateRate(){
         //! DEFINE RULES OF UPDATING MARKET INDICES and INVESTMENT FUNDS UNITS!
         float currentRate = getRate();
+        float updated = 0;
         if (currentRate < 1 && accumulatedRateChange != 0){
-            float updated = 1/(1/currentRate - 1/accumulatedRateChange);
-            if (updated > 0){
-                updateRate(updated);
-            }
+            updated = 1/(1/currentRate - 1/accumulatedRateChange);
         }
         else{
-            updateRate(currentRate + accumulatedRateChange);
+            updated = currentRate + accumulatedRateChange;
+        }
+
+        if (updated > 0){
+            updateRate(updated);
         }
         accumulatedRateChange = 0;
-    }
-    public String getNameOfBackingAsset(){
-        return this.nameOfBackingAsset;
     }
     
     public float getRate(){
@@ -51,6 +50,7 @@ public class ExchangeRatesProvider {
 
     public void removeLastRate(){
         this.rates.removeLast();
+        numberOfStoredRates -= 1;
     }
 
     public void updateWRT(float change, String wrt){
