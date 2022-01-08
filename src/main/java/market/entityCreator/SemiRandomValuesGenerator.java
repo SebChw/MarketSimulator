@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import market.App;
 import market.assets.Asset;
 import market.assets.Currency;
+import market.traders.InvestmentFund;
 import market.traders.Trader;
 import market.world.World;
 
@@ -170,13 +171,19 @@ public class SemiRandomValuesGenerator {
     }
 
     public Currency getRandomCurrency(ArrayList<Currency> currenciesByNow){
-        int randomCurrencyIndex = this.getRandomArrayIndex(currenciesByNow);
+        int randomCurrencyIndex = getRandomArrayIndex(currenciesByNow);
         return currenciesByNow.get(randomCurrencyIndex);
     }
 
     public Asset getRandomAsset(ArrayList<? extends Asset> assetsByNow){
-        int randomAssetIndex = this.getRandomArrayIndex(assetsByNow);
+        int randomAssetIndex = getRandomArrayIndex(assetsByNow);
         return assetsByNow.get(randomAssetIndex);
+    }
+
+    public static InvestmentFund getRandomInvestmentFund(ArrayList<InvestmentFund> funds){
+        int randomIndex = getRandomArrayIndex(funds);
+        return funds.get(randomIndex);
+
     }
 
     public boolean getBearIndicator(){

@@ -53,8 +53,12 @@ public class Trader  implements Runnable{
             if (!availableAssets.isEmpty()) {
                 Asset chosenAsset = availableAssets.get(SemiRandomValuesGenerator.getRandomArrayIndex(availableAssets));
 
-                if(Objects.isNull(investmentBudget.get(chosenAsset.getName()))) return;
+                if(Objects.isNull(investmentBudget.get(chosenAsset.getName()))) {
+                    System.out.println("Error in Selling!");
+                    return;
+                }
                 if (investmentBudget.get(chosenAsset.getName()) == 0){
+                    System.out.println("Error in Selling!");
                     investmentBudget.remove(chosenAsset.getName());
                     return;
                 } 
@@ -103,6 +107,7 @@ public class Trader  implements Runnable{
     }
 
     public void addBudget(Asset asset, float amount){
+        if (amount < 0.1) return;
         //!I'm updating all assset information here
         asset.changeAmountInCirculation(amount);
         if (SemiRandomValuesGenerator.getRandomFloatNumber(1) > 0.5){
@@ -164,29 +169,33 @@ public class Trader  implements Runnable{
         return 0;
     }
 
+    public void operation(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //Now perform some random buing/selling/increasing budget with some probability
+        float transactionProbability = world.getTransactionProbability();
+        if (isBear) transactionProbability += 0.1;
+        else transactionProbability -= 0.1;
+        
+        if(investmentBudget.isEmpty() || SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.2){
+            increaseBudget(); 
+        }
+        if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < transactionProbability){
+            tradeOnMarket("buy");
+        }
+        if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < transactionProbability){
+            tradeOnMarket("sell");
+        }
+    }
+    
     @Override
     public void run() {
         while(App.isRunning){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-    
-            //Now perform some random buing/selling/increasing budget with some probability
-            float transactionProbability = world.getTransactionProbability();
-            if (isBear) transactionProbability += 0.1;
-            else transactionProbability -= 0.1;
-            
-            if(investmentBudget.isEmpty() || SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.2){
-                increaseBudget(); 
-            }
-            if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < transactionProbability){
-                tradeOnMarket("buy");
-            }
-            if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < transactionProbability){
-                tradeOnMarket("sell");
-            }
+           operation();
         }
         //System.out.println("Thread is closing!");
        

@@ -20,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import market.assets.Asset;
+import market.assets.InvestmentFundUnit;
 import market.markets.Market;
 import market.traders.Trader;
 import market.world.World;
@@ -55,9 +56,9 @@ public class MainPanelController implements Initializable{
 
     private TableFiller tableFiller;
 
-    private  boolean assetSeen = false;
-    private  boolean marketSeen = false;
-    private  boolean traderSeen = false;
+    private  boolean assetSeen = true;
+    private  boolean marketSeen = true;
+    private  boolean traderSeen = true;
     
     private TableFilter tableFilter = new TableFilter();
 
@@ -151,10 +152,14 @@ public class MainPanelController implements Initializable{
        
     }
     public void addInvestmentFund(){
-        tradersData.add(world.addNewInvestmentFund());
+        tradersData.add(world.addNewInvestmentFund(this));
         refreshTable(traderTable);
     }
 
+    public void addInvestmentFundUnit(InvestmentFundUnit unit){
+        assetsData.add(unit);
+        refreshTable(traderTable);
+    }
     public void showAssets(){
         if(assetSeen) {
             setVisible(0, assetSearch, assetTable,assetLabel);

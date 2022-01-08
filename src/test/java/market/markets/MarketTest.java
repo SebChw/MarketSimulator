@@ -26,7 +26,10 @@ public class MarketTest {
         availableCurrencies.put(cur2.getName(), cur2);
         availableCommodities.put(com1.getName(), com1);
         availableCommodities.put(com2.getName(), com2);
-
+        world.addNewCurrency(cur1); //This is so that market can infer it's Trading Asset type!
+        world.addNewCurrency(cur2); //This is so that market can infer it's Trading Asset type!
+        world.addNewCommodity(com1);
+        world.addNewCommodity(com2);
         Market market = new Market(null,null,null,null, (float)0.1,cur1, availableCurrencies, world);
         Market market2 = new Market(null,null,null,null, (float)0.1,cur2, availableCommodities , world);
         HashMap<String,Float> investmentBudget = new HashMap<String,Float>();
@@ -77,10 +80,6 @@ public class MarketTest {
 
 
         trader.addBudget(cur1, 16.4f);
-        world.addNewCurrency(cur1); // For this information I need to have that currency available in the world So that I can exchange it
-        world.addNewCurrency(cur1);
-        world.addNewCommodity(com1);
-        world.addNewCommodity(com2);
         //Unfortunatelly I don;t know the order of iterations within map So I need to leave only one thing here
         //Okay So I want to buy in the market where trading Currency is yang but I only have zloty.
         //And I want 1 zloto so I need 5 yangs + provision -> 5,5 So I need 11 zloty So I should have 0 zloty and It should dissapear from the budget!
@@ -103,6 +102,7 @@ public class MarketTest {
         market.buy(trader, cur2, 25);
 
         assertEquals(null, investmentBudget.get("zloto"));
+        assertEquals(null, investmentBudget.get("zloty"));
         assertEquals(null, investmentBudget.get("srebro"));
         assertEquals((float)5, investmentBudget.get("yang"));
 
@@ -114,7 +114,6 @@ public class MarketTest {
         //I have 5 yangs and I want to buy 3 yangs. On that market I cant buy with zlotys.
         //Cost of getting 3 yangs is 12 zloty + provision = 13.2 .
         //So I exchange 5 yangs -> 20 zloty So I should be left with 6.8 zloty and 3 yangs 
-        world.addNewCurrency(cur2);
         market.buy(trader, cur2, 3);
         assertEquals((float)3, investmentBudget.get("yang"));
         assertEquals((float)6.8, investmentBudget.get("zloty"));

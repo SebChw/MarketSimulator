@@ -39,7 +39,7 @@ public class Share extends AssetBackedByCurrency{
             System.out.println("User ERROR! with company: " + this.company.getName() + " " + amount);
             return 0;
         }
-        return SemiRandomValuesGenerator.getRandomIntNumber((int)(amount+0.1));
+        return SemiRandomValuesGenerator.getRandomIntNumber((int)(amount));
     }
     public float getAvailableShares(){
         return this.availableShares;
@@ -86,5 +86,9 @@ public class Share extends AssetBackedByCurrency{
     @Override
     public String toString(){
         return super.toString() + "\nIssued by: " + company.getName();
+    }
+
+    public float calculateMainToThis(float amount) {
+        return (int)super.calculateMainToThis(amount);
     }
 }

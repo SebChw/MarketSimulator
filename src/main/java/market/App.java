@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import market.world.World;
+import market.entityCreator.SemiRandomValuesGenerator;
 import market.gui.MainPanelController;
 import market.markets.Market;
 import javafx.application.Platform;
@@ -68,6 +69,9 @@ public class App extends Application {
    
                   // UI update is run on the Application thread
                   world.updateAllRates();
+                  if(!world.getInvestmentFunds().isEmpty()){
+                     SemiRandomValuesGenerator.getRandomInvestmentFund(world.getInvestmentFunds()).IssueFundUnit();
+                  }
                   Platform.runLater(updater);
                }
             }

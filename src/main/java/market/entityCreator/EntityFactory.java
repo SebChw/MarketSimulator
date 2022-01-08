@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.random.RandomGenerator;
 import market.assets.marketIndex.MarketIndex;
 import market.exchangeRates.ExchangeRatesProvider;
+import market.gui.MainPanelController;
 import market.assets.marketIndex.MarketIndex;
 
 import market.assets.marketIndex.*;
@@ -35,7 +36,7 @@ public class EntityFactory {
         HashMap<String, Float> investmentBudget = new HashMap<String, Float>();
         String name = company.get("name");
         String ipoDate = company.get("ipoDate");
-        Float ipoShareValue = SemiRandomValuesGenerator.getRandomFloatNumber(5000, 0.1f) + 100;
+        Float ipoShareValue = SemiRandomValuesGenerator.getRandomFloatNumber(100, 0.1f) + 100;
         float openingPrice = SemiRandomValuesGenerator.getRandomFloatNumber(10000, 0.1f) + 100;
         float profit = SemiRandomValuesGenerator.getRandomFloatNumber(10000, 0.1f) + 100;
         float revenue = SemiRandomValuesGenerator.getRandomFloatNumber(5000, 0.1f) + 100;
@@ -56,7 +57,7 @@ public class EntityFactory {
         return new HumanInvestor(tradingIdentifier, investmentBudget, name, lastName, isBear, this.world);
     }
 
-    public InvestmentFund createInvestmentFund(ArrayList<Currency> currenciesByNow){
+    public InvestmentFund createInvestmentFund(ArrayList<Currency> currenciesByNow, MainPanelController controller){
         HashMap<String, String> investmentFund = this.attributesGenerator.getRandomInvestmentFundData();
         String tradingIdentifier = investmentFund.get("tradingIdentifier");
         HashMap<String, Float> investmentBudget = new HashMap<String, Float>();
@@ -66,7 +67,7 @@ public class EntityFactory {
         boolean isBear = attributesGenerator.getBearIndicator();
         Currency registeredCurrency = this.attributesGenerator.getRandomCurrency(currenciesByNow);
 
-        return new InvestmentFund(tradingIdentifier, investmentBudget, name, menagerFirstName, menagerLastName, registeredCurrency, isBear, this.world);
+        return new InvestmentFund(tradingIdentifier, investmentBudget, name, menagerFirstName, menagerLastName, registeredCurrency, isBear, this.world, controller);
     }
 
     public Commodity createCommodity(ArrayList<Currency> currenciesByNow){
@@ -164,8 +165,6 @@ public class EntityFactory {
 
 
     public InvestmentFundUnit createFundUnit(InvestmentFund issuedBy, ArrayList<Asset> availableAssets) {
-       
-        
         HashMap<String, Float> boughtAssets = new HashMap<String, Float>();
         float cost = 0;
         for (Asset asset : availableAssets) {
@@ -188,7 +187,7 @@ public class EntityFactory {
 
         float fundPercentageProfit = SemiRandomValuesGenerator.getRandomFloatNumber(0.25f, 0.1f);
 
-        return new InvestmentFundUnit(issuedBy.getName(), SemiRandomValuesGenerator.getRandomIntNumber(50), issuedBy, cost +  SemiRandomValuesGenerator.getRandomFloatNumber(100, 0.1f), boughtAssets, fundPercentageProfit);
+        return new InvestmentFundUnit(issuedBy.getName() + issuedBy.getIssuedFundsAmount(), SemiRandomValuesGenerator.getRandomIntNumber(50), issuedBy, cost +  SemiRandomValuesGenerator.getRandomFloatNumber(100, 0.1f), boughtAssets, fundPercentageProfit, world);
 
     }
 

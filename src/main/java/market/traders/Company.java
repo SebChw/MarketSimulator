@@ -68,20 +68,30 @@ public class Company extends Trader implements CompanySubject{
         this.share.increaseShares(amount);
     }
     
+    public void decreaseShares(int amount){
+        if (amount > share.getAvailableShares()){
+            System.out.println("You can only buy how many shares are available!!");
+        }
+        this.share.increaseShares(-amount);
+    }
     public LocalDate getIpoDate(){
         return this.ipoDate;
     }
 
     public void generateRevenue(){
-
+        //System.out.println("Company: " + this.getName() + "Generates ravenue");
+        revenue += SemiRandomValuesGenerator.getRandomFloatNumber(1000, 100);
     }
 
     public void generateProfit(){
+        //System.out.println("Company: " + this.getName() + "Generates profit");
+        profit += SemiRandomValuesGenerator.getRandomFloatNumber(1000, 100);
 
     }
 
     public void issueShares(){
-
+        //System.out.println("Company: " + this.getName() + "Generates shares");
+        share.increaseShares(SemiRandomValuesGenerator.getRandomIntNumber(20));
     }
 
     @Override
@@ -118,7 +128,13 @@ public class Company extends Trader implements CompanySubject{
         
     }
 
-
+    @Override
+    public void operation(){
+        super.operation();
+        generateRevenue();
+        generateProfit();
+        
+    }
 
     
 }

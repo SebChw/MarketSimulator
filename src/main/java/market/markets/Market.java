@@ -86,13 +86,17 @@ public class Market {
                 trader.addBudget(this.tradingCurrency, tradingCurrencyAmount); // It can't be null here! I'm returning back what has left in trading Currency
             }
             else if (tradingCurrencyAmount < cost){
+                //! THis lead to a problem with Integer Based Assets!!!!
                 //System.out.println("You still don't have enough money. We will exchange all you have for the chosen asset");
                 //Now I treat tradingCurrencyAmount as cost + provision. So I need to get cost back
                 tradingCurrencyAmount = tradingCurrencyAmount / (1 + this.percentageOperationCost);
                 
                 float newAmount = this.tradingCurrency.calculateThisToDifferent(wantedAsset, tradingCurrencyAmount);
                 wantedAsset.unfreeze(amount-newAmount); //! For sure at this moment amount > newAmount
+                //! In case of Integer based Assets this may lead to some problem e.g we have money for 0.5 Share but we can't buy that amount! so that we may end with 0 and should get return of money!
+                cost = this.tradingCurrency.calculateDifferentToThis(wantedAsset, newAmount); // This will be for sure less or equal than previous cost!
                 trader.addBudget(wantedAsset, newAmount);
+                trader.addBudget(tradingCurrency, tradingCurrencyAmount - cost);
             }
             else{
                 //If they are equal I just add wantedAsset -> Enough money

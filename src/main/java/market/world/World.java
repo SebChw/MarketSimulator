@@ -62,7 +62,7 @@ public class World {
         //numberOfCompanies == numberOfShares
         float numberOfAssets = objectCounter.getAmountOfAssets();
         float numberOfInvestors = objectCounter.getAmountOfInvestors();
-        if (numberOfInvestors/numberOfAssets < 0.5){
+        if (numberOfInvestors/numberOfAssets < 0.25){
             float randomNumber = SemiRandomValuesGenerator.getRandomFloatNumber(1);
             if (randomNumber < 0.5) {
                 controller.addHumanInvestor();
@@ -148,10 +148,10 @@ public class World {
         return human;
     }
 
-    public InvestmentFund addNewInvestmentFund(){
+    public InvestmentFund addNewInvestmentFund(MainPanelController controller){
         InvestmentFund fund = null;
         if (objectCounter.getNumberOfCurrencies() > 0) {
-            fund = this.entityFactory.createInvestmentFund(this.currencies);
+            fund = this.entityFactory.createInvestmentFund(this.currencies, controller);
             this.investmentFunds.add(fund);
             this.allTraders.add(fund);
             objectCounter.changeNumberOfInvestmentFunds(1);
@@ -229,17 +229,19 @@ public class World {
 
     }
 
-    public void addNewInvestmentFundUnit(InvestmentFund issuedBy){
+    public InvestmentFundUnit addNewInvestmentFundUnit(InvestmentFund issuedBy){
         //This method won't be executed very often so thaat I can create new ArrayList each time
         if (objectCounter.getAmountOfAssets() > 0){
             InvestmentFundUnit unit = this.entityFactory.createFundUnit(issuedBy, new ArrayList<>(this.allAssets.values()));
             this.fundUnits.add(unit);
             this.allAssets.put(unit.getName(), unit);
             objectCounter.changeNumberOfInvestmentFundUnits(1);
-
+            issuedBy.getController().addInvestmentFundUnit(unit);
+            return unit;
         }
         else {
             System.out.println("You can't create FundUnit withouth any Assets on the Market");
+            return null;
         }
         
     }
@@ -303,5 +305,9 @@ public class World {
     }
     public void addNewShare(Share share){
         this.allAssets.put(share.getName(), share);
+    }
+
+    public ArrayList<InvestmentFund> getInvestmentFunds(){
+        return this.investmentFunds;
     }
 }

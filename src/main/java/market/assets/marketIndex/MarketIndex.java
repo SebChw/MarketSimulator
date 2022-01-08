@@ -9,7 +9,7 @@ import java.util.LinkedList;
 
 public class MarketIndex extends Asset{
     private ArrayList<Company> companies;
-    private int availableIndices = 0;
+    
     public MarketIndex(String name, String type, ArrayList<Company> companies, String backingAsset, float startingRate) {
         super(name, type, 0, backingAsset, startingRate);
         this.companies = companies;
@@ -46,11 +46,16 @@ public class MarketIndex extends Asset{
     }
 
     public float getPossibleAmount(){
+        System.out.println("Market Amount possible!");
         return 1;
     }
 
     public float getPossibleAmount(float amount){
-        return SemiRandomValuesGenerator.getRandomIntNumber((int)amount);
+        if(amount < 1){
+            System.out.println("User ERROR! with index: " + getName() + " " + amount);
+            return 0;
+        }
+        return SemiRandomValuesGenerator.getRandomIntNumber((int)(amount));
     }
     @Override
     public synchronized boolean canBeBought(float amount){
@@ -66,6 +71,10 @@ public class MarketIndex extends Asset{
         }
         System.out.println("You can't buy this Index as this would lead to Bigger amountInCirculation of Share than available");
         return true;
+    }
+    
+    public float calculateMainToThis(float amount) {
+        return (int)super.calculateMainToThis(amount);
     }
     
 }
