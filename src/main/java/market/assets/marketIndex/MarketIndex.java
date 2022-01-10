@@ -14,7 +14,11 @@ public class MarketIndex extends Asset{
         super(name, type, 0, backingAsset, startingRate);
         this.companies = companies;
     }
-
+    public String toString(){
+        ArrayList<String> companyNames = new ArrayList<String>(this.companies.size());
+        for(Company company : this.companies) companyNames.add(company.getName());
+        return super.toString() + "\n companies in Index: " + companyNames;
+    }
     public void addToIndex(Company company){
 
     }

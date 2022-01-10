@@ -30,7 +30,7 @@ public class EntityFactory {
        this.attributesGenerator = new SemiRandomValuesGenerator(world); 
     }
 
-    public Company createCompany(ArrayList<Currency> currenciesByNow){
+    public Company createCompany(ArrayList<Currency> currenciesByNow, ArrayList<DynamicMarketIndex> dynamicIndices){
         HashMap<String, String> company = this.attributesGenerator.getRandomCompanyData();
         String tradingIdentifier = company.get("tradingIdentifier");
         HashMap<String, Float> investmentBudget = new HashMap<String, Float>();
@@ -43,7 +43,13 @@ public class EntityFactory {
         boolean isBear = attributesGenerator.getBearIndicator();
         Currency registeredCurrency = this.attributesGenerator.getRandomCurrency(currenciesByNow);
 
-        return new Company(tradingIdentifier, investmentBudget, name, ipoDate, ipoShareValue, openingPrice, profit, revenue, registeredCurrency, isBear, this.world);
+        Company companyCreated = new Company(tradingIdentifier, investmentBudget, name, ipoDate, ipoShareValue, openingPrice, profit, revenue, registeredCurrency, isBear, this.world);
+
+        for (DynamicMarketIndex dynamicMarketIndex : dynamicIndices) {
+            companyCreated.registerObserver(dynamicMarketIndex);
+        }
+
+        return companyCreated;
     }
 
     public HumanInvestor createHumanInvestor(ArrayList<Currency> currenciesByNow) {
@@ -122,14 +128,19 @@ public class EntityFactory {
     public DynamicMarketIndex createDynamicMarketIndex(ArrayList<Company> companiesByNow, String filterType){
         HashMap<String,String> attributes = this.attributesGenerator.getRandomIndexData();
         String name = attributes.get("name");
-        int numberOfCompanies = SemiRandomValuesGenerator.getRandomIntNumber(16) + 5;
+        int numberOfCompanies = SemiRandomValuesGenerator.getRandomIntNumber(3) + 2;
         CompaniesFilter filter = biggestFilter; //By Default it is biggest
         if (filterType.equals("startup")){
             filter = startupsFilter;
         }
+        
         DynamicMarketIndex index = new DynamicMarketIndex(name, new ArrayList<Company>(companiesByNow), this.mainAsset, 0, filter, numberOfCompanies);
         index.getMainBankRates().removeLastRate(); // This is done artificially to start with some rate calculated after filtering
         index.updateIndex();
+
+        for (Company company : companiesByNow) {
+            company.registerObserver(index);
+        }
 
         return index;
     }
@@ -168,7 +179,7 @@ public class EntityFactory {
         HashMap<String, Float> boughtAssets = new HashMap<String, Float>();
         float cost = 0;
         for (Asset asset : availableAssets) {
-            if (asset.getType() == "fund unit") continue;
+            if (asset.getType().equals("Investment Fund Unit") || asset.getType().equals("Market Index") || asset.getType().equals("Share")) continue;
 
             if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.1){
                 float amountBought = SemiRandomValuesGenerator.getRandomFloatNumber(100, 0.1f);

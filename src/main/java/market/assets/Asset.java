@@ -71,7 +71,8 @@ public abstract class Asset{
 
     @Override 
     public String toString(){
-        return "Asset name: " + this.name + "\n amount in circulation: " + this.amountInCirculation + "\n hype Level" + this.hypeLevel + "\n amount of owners: " + this.amountOfOwners;
+        return  "Minimal Price: " + mainBankRates.getMinPrice() +
+                "\nMaximum Price: " + mainBankRates.getMaxPrice();
     }
 
     public float calculateThisToMain(float amount) {

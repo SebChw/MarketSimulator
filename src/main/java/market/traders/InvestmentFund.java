@@ -50,6 +50,7 @@ public class InvestmentFund extends Trader {
     }
 
     public void buy(Trader trader, InvestmentFundUnit wantedUnit, float amount){
+        //! With that trading system only with good currency you can but anything that may lead to no buy of some UNIT at all :(
         if (!checkConstraints(trader, wantedUnit)) return;
 
         HashMap<String, Float> traderInvestmentBudget = trader.getInvestmentBudget();
@@ -59,6 +60,10 @@ public class InvestmentFund extends Trader {
         if (traderInvestmentBudget.containsKey(registeredCurrencyName) && traderInvestmentBudget.get(registeredCurrencyName) >= cost){
             trader.addBudget(wantedUnit, amount);
             trader.subtractBudget(registeredCurrency, cost); //! This yield to negative Amount in circulation of an asset as we Subtract more of it then we possible bought previously!!.
+        }
+        else {
+            //System.out.println(this.registeredCurrency.getName() + " " + cost + " " + traderInvestmentBudget.get(registeredCurrencyName));
+            System.out.println("Not enough money to buy on investment fund! Or you just don't have our currency!");
         }
     }
 

@@ -10,10 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import javafx.scene.layout.GridPane;
 import market.entityCreator.EntityFactory;
 import market.entityCreator.SemiRandomValuesGenerator;
-import market.exchangeRates.ExchangeRatesProvider;
 import market.gui.MainPanelController;
 
 public class World {
@@ -116,7 +114,7 @@ public class World {
         Company company = null;
         //In that moment we should create Share object too!
         if (objectCounter.getNumberOfCurrencies() > 0) {
-            company = this.entityFactory.createCompany(this.currencies);
+            company = this.entityFactory.createCompany(this.currencies, this.dynamicMarketIndices);
             this.companies.add(company);
             this.allTraders.add(company);
             objectCounter.changeNumberOfCompanies(1);
@@ -303,11 +301,24 @@ public class World {
             //asset.changeAmountOfOwners(1);
         }
     }
+    public void updateAllIndices(){
+        for (Company company : companies){
+            company.notifyObservers();
+        }
+        for (DynamicMarketIndex index : this.dynamicMarketIndices) {
+            index.updateIndex();
+            //asset.changeAmountOfOwners(1);
+        }
+    }
     public void addNewShare(Share share){
         this.allAssets.put(share.getName(), share);
     }
 
     public ArrayList<InvestmentFund> getInvestmentFunds(){
         return this.investmentFunds;
+    }
+    
+    public String getMainAsset(){
+        return mainAsset;
     }
 }

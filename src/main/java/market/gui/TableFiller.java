@@ -7,18 +7,21 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import market.assets.Asset;
 import market.markets.Market;
 import market.traders.Trader;
 import market.world.World;
+import javafx.scene.control.Tooltip;
 public class TableFiller {
     private World world;
 
@@ -64,6 +67,7 @@ public class TableFiller {
     }
 
     public void fillAssetTable(TableView<Asset> table, FilteredList<Asset> marketsData){
+        //!Tell a story about how you tried hard to add Tooltip and new scene factory here and then checked what setClickEvent Does!
         for (int i = 0; i < assetColumnsNames.length; i++){
             TableColumn<Asset,String> column = new TableColumn<Asset,String>(assetColumnsNames[i]);
             column.setCellValueFactory(new PropertyValueFactory<>(assetConstructorNames[i]));
@@ -106,8 +110,13 @@ public class TableFiller {
     }
 
     public <T> void setClickEvent(TableView<T> table, String type){
+
         table.setRowFactory(tv -> {
-            TableRow<T> row = new TableRow<>();
+            //!Be Carefull here. Thius may be buggy?
+            TooltipTableRow<T> row = new TooltipTableRow<T>((T thing) -> {
+                return thing.toString();
+              });
+
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
                     T rowData = row.getItem();
@@ -119,6 +128,11 @@ public class TableFiller {
                     }
             
                 }
+            });
+
+            row.setOnMouseEntered(event -> {
+                T rowData = row.getItem();
+                row.setTooltipText(rowData);
             });
             return row ;
         });

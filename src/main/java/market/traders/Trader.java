@@ -4,11 +4,14 @@ import market.world.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javafx.scene.layout.GridPane;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.scene.control.Label;
 import market.App;
 import market.assets.Asset;
@@ -19,6 +22,7 @@ public class Trader  implements Runnable{
     private HashMap<String, Float> investmentBudget;
     private String name;
     private String type;
+    private SimpleFloatProperty budgetInGold = new SimpleFloatProperty(0);
     private String [] details = {"Id: ", "Type: ", "Name: ", "Is Bear: "};
     Boolean isBear;
     private World world;
@@ -98,8 +102,19 @@ public class Trader  implements Runnable{
     public String getType(){
         return this.type;
     }
-    public float getBudgetInGold(){
-        return 1000;
+    public SimpleFloatProperty budgetInGoldProperty(){
+        return this.budgetInGold;
+    }
+
+    public void calculateBudgetInGold(){
+        float budgetInGold = 0;
+        Iterator<Map.Entry<String, Float>> it = investmentBudget.entrySet().iterator(); //!Here I need to copy this as Im changing it within loop
+        Map.Entry<String, Float> budget = null; 
+        while ( it.hasNext()){
+            budget = it.next();
+            budgetInGold += (world.getParticularAsset(budget.getKey()).calculateThisToMain(budget.getValue()));
+        }
+        this.budgetInGold.set(budgetInGold); 
     }
     
     public HashMap<String, Float> getInvestmentBudget(){
@@ -130,7 +145,7 @@ public class Trader  implements Runnable{
         else{
             currentBudget -= amount;
             if (currentBudget < 0.1){
-                System.out.println("Removing from budget: " + assetName);
+                //System.out.println("Removing from budget: " + assetName);
                 //!This may lead to bug with shares
                 amount += currentBudget; // Since I'm removing it from trader I also should remove same amount from circulation!
                 this.investmentBudget.remove(assetName);
@@ -190,6 +205,7 @@ public class Trader  implements Runnable{
         if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < transactionProbability){
             tradeOnMarket("sell");
         }
+        calculateBudgetInGold();
     }
     
     @Override

@@ -74,8 +74,8 @@ public class MainPanelController implements Initializable{
         world.getObjectCounter().fillGridPane(worldDetails);
         world.addNewCurrency();
         world.addNewCommodity();
-        world.addNewCompany();
-        Market market = world.addNewRandomMarket();
+        //world.addNewCompany();
+        //Market market = world.addNewRandomMarket();
         this.marketsData.addAll(world.getAllMarkets());
         this.assetsData.addAll(world.getAllAssets());
         this.tradersData.addAll(world.getAllTraders());
@@ -109,7 +109,8 @@ public class MainPanelController implements Initializable{
 
     public void refreshTable(TableView<?>table){
         marketTable.getColumns().get(0).setVisible(false);
-        marketTable.getColumns().get(0).setVisible(true); 
+        marketTable.getColumns().get(0).setVisible(true);
+         
     }
 
     public void addMarket(){

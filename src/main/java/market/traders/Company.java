@@ -39,8 +39,8 @@ public class Company extends Trader implements CompanySubject{
         super(tradingIdentifier, investmentBudget, name, "Company", isBear, world);
         this.ipoDate = LocalDate.parse(ipoDate);
         this.openingPrice = openingPrice;
-        this.currentPrice = openingPrice;
-        this.maximumPrice = openingPrice;
+        //this.currentPrice = openingPrice;
+        //this.maximumPrice = openingPrice;
         this.valueOverTime.add(openingPrice);
         this.profit = profit;
         this.revenue = revenue;
@@ -58,7 +58,7 @@ public class Company extends Trader implements CompanySubject{
         return this.share.getCurrentRate();
     }
     public float getCurrentPrice(){
-        return this.currentPrice;
+        return this.share.getCurrentRate();
     }
     public Currency getRegisteredCurrency() {
         return this.registeredCurrency;
@@ -133,7 +133,7 @@ public class Company extends Trader implements CompanySubject{
         super.operation();
         generateRevenue();
         generateProfit();
-        
+        issueShares();
     }
 
     

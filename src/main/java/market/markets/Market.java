@@ -46,7 +46,9 @@ public class Market {
         this.assetType = world.getParticularAsset(availableAssets.keySet().iterator().next()).getType();
 
     }
-
+    public String toString(){
+        return "Click me to see Available Assets!";
+    }
     public void buy(Trader trader, Asset wantedAsset, float amount){
         if (!this.availableAssets.containsKey(wantedAsset.getName())){
             System.out.println("We don't have such asset here!");

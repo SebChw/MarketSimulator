@@ -19,7 +19,7 @@ public class InvestmentFundUnit extends AssetBackedByCurrency {
 
     //! This probably works the same way as Share that we have some specific amount of it and we can't buy more than that
     public InvestmentFundUnit(String name, float amountInCirculation, InvestmentFund issuedBy, Float startingRate, HashMap<String,Float> boughtAssets, float fundPercentageProfit, World world) {
-        super(name, "InvestmentFundUnit", 0, issuedBy.getRegisteredCurrency(), startingRate);
+        super(name, "Investment Fund Unit", 0, issuedBy.getRegisteredCurrency(), startingRate);
         this.issuedBy = issuedBy;
         this.availableUnits = amountInCirculation;
         this.boughtAssets = boughtAssets;
@@ -33,7 +33,7 @@ public class InvestmentFundUnit extends AssetBackedByCurrency {
 
     @Override
     public String toString(){
-        return super.toString() + "\nIssued By: " + issuedBy.getName();
+        return super.toString() + "\nIssued By: " + issuedBy.getName() + "\nAssets in Unit: " + boughtAssets;
     }
 
     public float calculateRatio(){

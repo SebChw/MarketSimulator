@@ -15,6 +15,8 @@ public class ExchangeRatesProvider {
     private AssetPriceRule assetPriceRule = new BasicAssetPriceRule();
     private float accumulatedRateChange = 0;
     private int numberOfStoredRates = 0;
+    private float minPrice = -5;
+    private float maxPrice = 10000;
     private LinkedList<Float> rates = new LinkedList<Float>(); // This provides exchange rates of one asset to all other
 
 
@@ -25,6 +27,12 @@ public class ExchangeRatesProvider {
 
     public void updateRate(Float rate){
         this.rates.addFirst(rate); // Consider here inserting new rate at the begining so taking it will be O(1). //!Add FIRST METHOD
+        if (minPrice < rate) {
+            minPrice = rate;
+        }
+        if (maxPrice > rate){
+            maxPrice = rate;
+        }
         numberOfStoredRates += 1;
     }
     public void updateRate(){
@@ -83,6 +91,16 @@ public class ExchangeRatesProvider {
 
     public int getNumberOfStoredRates() {
         return this.numberOfStoredRates;
+    }
+
+    public float getMinPrice(){
+        return 1/minPrice;
+    }
+    public float getMaxPrice(){
+        return 1/maxPrice;
+    }
+    public float getCurrentPrice(){
+        return 1/getRate();
     }
     
 }

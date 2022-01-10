@@ -25,10 +25,10 @@ public class HumanInvestor extends Trader {
         return lastName;
     }
     public void tradeOnInvestmentFund(String operation){
-        System.out.println("Me " + this.getName() + " Trading on InvestmentFund!");
+        //System.out.println("Me " + this.getName() + " Trading on InvestmentFund!");
         ArrayList<InvestmentFund> availableFunds = this.getWorld().getInvestmentFunds();
         if (availableFunds.isEmpty()){
-            System.out.println("No funds Available for me :(");
+            //System.out.println("No funds Available for me :(");
             return;
         }
         InvestmentFund fund = availableFunds.get(SemiRandomValuesGenerator.getRandomArrayIndex(availableFunds));

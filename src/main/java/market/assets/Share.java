@@ -85,7 +85,7 @@ public class Share extends AssetBackedByCurrency{
 
     @Override
     public String toString(){
-        return super.toString() + "\nIssued by: " + company.getName();
+        return super.toString() + "\nIssued by: " + company.getName() +"\nAvailable Shares: " + availableShares + "\nIssued shares: " + issuedShares;
     }
 
     public float calculateMainToThis(float amount) {

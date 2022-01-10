@@ -1,33 +1,40 @@
 package market;
 
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import market.world.World;
 import market.entityCreator.SemiRandomValuesGenerator;
 import market.gui.MainPanelController;
-import market.markets.Market;
 import javafx.application.Platform;
-import market.traders.Trader;
-import javafx.concurrent.Task;
+
 
 //!THE PROBLEM OF NEGATIVE AMOUNT IN CIRCULATION EMERGES AS SOMEHOW ASSET CAN HAVE NEGATIVE RATIO!
 
 //Create one window with more tables!
 public class App extends Application {
+    
     //alternative -> when creating scene pass a World as a paramter
     public static boolean isRunning = true;
+    
+    /** 
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         System.out.println((int)(0.9f));
         launch(args);
 
     }
 
+    
+    /** 
+     * @param stage
+     * @throws Exception
+     */
     @Override
     public void start(Stage stage) throws Exception {
         World world = new World("Spice");
@@ -58,7 +65,11 @@ public class App extends Application {
    
                   @Override
                   public void run() {
+                     //! If any thread tries to update sth with JAVA FX WE NEED to run it via the Platform.runLater
                      controller.updateDate();
+                     if(SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.1 && !world.getInvestmentFunds().isEmpty()){
+                        SemiRandomValuesGenerator.getRandomInvestmentFund(world.getInvestmentFunds()).IssueFundUnit();
+                     }
                   }
                };
    
@@ -69,9 +80,7 @@ public class App extends Application {
    
                   // UI update is run on the Application thread
                   world.updateAllRates();
-                  if(!world.getInvestmentFunds().isEmpty()){
-                     SemiRandomValuesGenerator.getRandomInvestmentFund(world.getInvestmentFunds()).IssueFundUnit();
-                  }
+                  world.updateAllIndices();
                   Platform.runLater(updater);
                }
             }
