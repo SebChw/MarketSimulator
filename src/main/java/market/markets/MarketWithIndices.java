@@ -6,29 +6,39 @@ import market.assets.Asset;
 import market.assets.Currency;
 import market.world.World;
 
-public class MarketWithIndices extends Market{
+/**
+ * If market is with indices we can additionally buy Indices on it. On Simple
+ * market it is not possible!
+ */
+public class MarketWithIndices extends Market {
 
-    private String [] availableIndices = {"Market Index", "DynamicMarketIndex"};
+    private String[] availableIndices = { "Market Index", "Dynamic Market Index" };
+
     public MarketWithIndices(String name, String country, String city, String address, float percentageOperationCost,
             Currency tradingCurrency, HashMap<String, Asset> availableAssets, World world) {
         super(name, country, city, address, percentageOperationCost, tradingCurrency, availableAssets, world);
 
-
     }
 
+    /**
+     * To this market we can add assets defined earlier like
+     * Currency/Commodity/Shares and additionally indices
+     * 
+     * @param asset
+     */
     @Override
-    public void addNewAsset(Asset asset){
+    public void addNewAsset(Asset asset) {
         super.addNewAsset(asset);
-        if (checkMarketIndexType(asset)){
+        if (checkMarketIndexType(asset)) {
             this.getAvailableAssetsHashMap().put(asset.getName(), asset);
         }
     }
-   
-    public boolean checkMarketIndexType(Asset marketIndex){
+
+    private boolean checkMarketIndexType(Asset marketIndex) {
         String type = marketIndex.getType();
-        for (String available : availableIndices){
-            if (available.equals(type));
-            return true;
+        for (String available : availableIndices) {
+            if (available.equals(type))
+                return true;
         }
         return false;
     }

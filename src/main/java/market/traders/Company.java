@@ -1,25 +1,28 @@
 package market.traders;
 
-import market.observers.*;
 import market.assets.Currency;
 import java.util.HashMap;
 
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import market.assets.Share;
 import market.entityCreator.SemiRandomValuesGenerator;
+import market.interfaces.CompanyObserver;
+import market.interfaces.CompanySubject;
+
 import java.time.LocalDate;
-import market.observers.CompanyObserver;
+
 import market.world.World;
-public class Company extends Trader implements CompanySubject{
+
+/**
+ * Class representing real company that issue shares and generates some profit
+ * etc.
+ */
+public class Company extends Trader implements CompanySubject {
     private LocalDate ipoDate;
-    private Float ipoShareValue; // This is rather attribute of share!
     private ArrayList<Float> valueOverTime = new ArrayList<Float>();
     private Float openingPrice;
-    private Float currentPrice;
-    private Float maximumPrice;
     private Float profit;
     private Float revenue;
     private Integer tradingVolume;
@@ -27,73 +30,114 @@ public class Company extends Trader implements CompanySubject{
     private Currency registeredCurrency;
     private Share share;
 
-    private String [] moreDetails = {"IPO date: ", "IPO share value: ", "Opening price: ", "Current price: ", "Maximum price: ", "Profit: ",
-                                    "Revenue: ", "Trading Volume: ", "Total sales: ", "Registered currency: "};
+    private String[] moreDetails = { "IPO date: ", "IPO share value: ", "Opening price: ", "Current price: ",
+            "Maximum price: ", "Profit: ",
+            "Revenue: ", "Trading Volume: ", "Total sales: ", "Registered currency: " };
 
     private ArrayList<CompanyObserver> companyObservers = new ArrayList<CompanyObserver>();
-    //!private Share share; // In General I think that share is something that belongs to the company. Have to think about it.
-    //Probably it is better to have it only in one place so that consistency is higher. Now issuing shares is no problem.
+    // !private Share share; // In General I think that share is something that
+    // belongs to the company. Have to think about it.
+    // Probably it is better to have it only in one place so that consistency is
+    // higher. Now issuing shares is no problem.
 
     public Company(String tradingIdentifier, HashMap<String, Float> investmentBudget, String name,
-                String ipoDate, float ipoShareValue, float openingPrice, float profit, float revenue, Currency registeredCurrency, boolean isBear, World world){
+            String ipoDate, float ipoShareValue, float openingPrice, float profit, float revenue,
+            Currency registeredCurrency, boolean isBear, World world) {
         super(tradingIdentifier, investmentBudget, name, "Company", isBear, world);
         this.ipoDate = LocalDate.parse(ipoDate);
         this.openingPrice = openingPrice;
-        //this.currentPrice = openingPrice;
-        //this.maximumPrice = openingPrice;
         this.valueOverTime.add(openingPrice);
         this.profit = profit;
         this.revenue = revenue;
         this.tradingVolume = 0;
-        this.totalSales = (float)0.0;
+        this.totalSales = (float) 0.0;
         this.registeredCurrency = registeredCurrency;
-        this.share = new Share(name, SemiRandomValuesGenerator.getRandomIntNumber(50), this, 1/ipoShareValue);
+        this.share = new Share(name, SemiRandomValuesGenerator.getRandomIntNumber(50), this, 1 / ipoShareValue);
 
     }
 
-    public Share getShare(){
+    /**
+     * @return Share
+     */
+    public Share getShare() {
         return this.share;
     }
-    public float getShareValue(){
+
+    /**
+     * @return float
+     */
+    public float getShareValue() {
         return this.share.getCurrentRate();
     }
-    public float getCurrentPrice(){
-        return this.share.getCurrentRate();
+
+    /**
+     * @return float
+     */
+    public float getCurrentPrice() {
+        return 1 / this.share.getCurrentRate();
     }
+
+    public float getMaximumPrice() {
+        return this.share.getMaximumRate();
+    }
+
+    /**
+     * @return Currency
+     */
     public Currency getRegisteredCurrency() {
         return this.registeredCurrency;
     }
 
-    public void increaseShares(int amount){
+    /**
+     * Company in any moment can increase available shares amount
+     * 
+     * @param amount
+     */
+    public void increaseShares(int amount) {
         this.share.increaseShares(amount);
     }
-    
-    public void decreaseShares(int amount){
-        if (amount > share.getAvailableShares()){
-            System.out.println("You can only buy how many shares are available!!");
-        }
+
+    /**
+     * In any moment company can remove not bought shares from the market
+     * 
+     * @param amount
+     */
+    public void decreaseShares(int amount) {
         this.share.increaseShares(-amount);
     }
-    public LocalDate getIpoDate(){
+
+    /**
+     * @return LocalDate
+     */
+    public LocalDate getIpoDate() {
         return this.ipoDate;
     }
 
-    public void generateRevenue(){
-        //System.out.println("Company: " + this.getName() + "Generates ravenue");
+    /**
+     * Just increases revenue by random amount
+     */
+    public void generateRevenue() {
         revenue += SemiRandomValuesGenerator.getRandomFloatNumber(1000, 100);
     }
 
-    public void generateProfit(){
-        //System.out.println("Company: " + this.getName() + "Generates profit");
+    /**
+     * Just increases profit by random amount
+     */
+    public void generateProfit() {
         profit += SemiRandomValuesGenerator.getRandomFloatNumber(1000, 100);
-
     }
 
-    public void issueShares(){
-        //System.out.println("Company: " + this.getName() + "Generates shares");
+    /**
+     * Just issue random amount of shares
+     */
+    public void issueShares() {
         share.increaseShares(SemiRandomValuesGenerator.getRandomIntNumber(20));
     }
 
+    /**
+     * In that way company informs all interested parts that company values has
+     * changed
+     */
     @Override
     public void notifyObservers() {
         for (CompanyObserver companyObserver : companyObservers) {
@@ -101,40 +145,49 @@ public class Company extends Trader implements CompanySubject{
         }
     }
 
+    /**
+     * @param observer
+     */
     @Override
     public void registerObserver(CompanyObserver observer) {
         this.companyObservers.add(observer);
-        
+
     }
 
+    /**
+     * @param observer
+     */
     @Override
     public void removeObserver(CompanyObserver observer) {
         this.companyObservers.remove(observer);
-        
+
     }
 
-
+    /**
+     * @param traderDetails
+     */
     @Override
-    public void fillGridPane(GridPane traderDetails){
+    public void fillGridPane(GridPane traderDetails) {
         super.fillGridPane(traderDetails);
-        Float ipoValue = 1/share.getCurrentRate();
-        String [] filledDetails = {ipoDate.toString(), ipoValue.toString(), openingPrice.toString(), currentPrice.toString(), maximumPrice.toString(),
-                                    profit.toString(), revenue.toString(), tradingVolume.toString(), totalSales.toString(), registeredCurrency.getName()};
-        for (int i = 0; i < filledDetails.length; i++) {
-            Label l = new Label();
-            l.setText(moreDetails[i] + filledDetails[i]);
-            traderDetails.add(l, 0, i + 4);
-        }
-        
+        Float ipoValue = 1 / share.getCurrentRate();
+        String[] filledDetails = { ipoDate.toString(), ipoValue.toString(), openingPrice.toString(),
+                String.valueOf(getCurrentPrice()), String.valueOf(getMaximumPrice()),
+                profit.toString(), revenue.toString(), tradingVolume.toString(), totalSales.toString(),
+                registeredCurrency.getName() };
+        super.addLabelsToPane(traderDetails, moreDetails, filledDetails, 4);
+
     }
 
+    /**
+     * Additionally to typical trader it also generates revenue, profit and issue
+     * Shares
+     */
     @Override
-    public void operation(){
+    public void operation() {
         super.operation();
         generateRevenue();
         generateProfit();
         issueShares();
     }
 
-    
 }

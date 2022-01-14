@@ -2,116 +2,153 @@ package market.traders;
 
 import java.util.HashMap;
 
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
-import market.assets.ProofOfPurchase;
 import market.gui.MainPanelController;
+import market.interfaces.Dealer;
+import market.transactions.StrictTransactionSystem;
+import market.transactions.TransactionSystem;
 import market.world.World;
+import market.assets.Asset;
 import market.assets.Currency;
 import market.assets.InvestmentFundUnit;
-import market.App;
-import market.entityCreator.*;
-public class InvestmentFund extends Trader {
+
+/**
+ * Class representing Investment Fund -> which can issue some units that can be
+ * bought by traders so we can also trade with this class members
+ * If we are human Investors
+ */
+public class InvestmentFund extends Trader implements Dealer {
     private String menagerFirstName;
     private String menagerLastName;
     private Currency registeredCurrency;
     private int issuedFundsAmount = 0;
-    private ArrayList<InvestmentFundUnit> issuedFundsUnit = new ArrayList<InvestmentFundUnit>();
+    private float fundPercentageProfit = 0;
+    private HashMap<String, Asset> issuedFundsUnit = new HashMap<String, Asset>();
+    TransactionSystem transactionSystem = new StrictTransactionSystem();
 
-    private String [] moreDetails = {"Menager first name: ", "Menager last name: ", "Registered currency: "}; 
+    private String[] moreDetails = { "Menager first name: ", "Menager last name: ", "Registered currency: " };
     private MainPanelController controller;
 
+    /**
+     * 
+     * 
+     * @param menagerFirstName
+     * @param menagerLastName
+     * @param registeredCurrency needed to calculate prices for units and
+     *                           transactions
+     * @param controller         issuing funds leads to a change in controller
+     */
     public InvestmentFund(String tradingIdentifier, HashMap<String, Float> investmentBudget, String name,
-                        String menagerFirstName, String menagerLastName, Currency registeredCurrency, boolean isBear, World world, MainPanelController controller){
+            String menagerFirstName, String menagerLastName, Currency registeredCurrency, boolean isBear, World world,
+            MainPanelController controller, float fundPercentageProfit) {
         super(tradingIdentifier, investmentBudget, name, "Investment Fund", isBear, world);
+
         this.menagerFirstName = menagerFirstName;
         this.menagerLastName = menagerLastName;
         this.registeredCurrency = registeredCurrency;
         this.controller = controller;
+        this.fundPercentageProfit = fundPercentageProfit;
 
-        IssueFundUnit();
+        issueFundUnit();
     }
 
-    public boolean checkConstraints(Trader trader, InvestmentFundUnit wantedUnit){
-
-        if (!trader.getType().equals("human Investor")){
-            System.out.println("Only Human Investors Can buy here!!");
-            return false;
-        }
-
-        if (!this.issuedFundsUnit.contains(wantedUnit)){
-            System.out.println("We don't have such asset here!");
-            return false;
-        }
-
-        return true;
+    /**
+     * Function running buyOperation on the transactionSystem
+     * 
+     * @param trader     trader wanted to trade here
+     * @param wantedUnit wanted unit
+     * @param amount     how many units they want
+     */
+    public void buy(Trader trader, Asset wantedUnit, float amount) {
+        transactionSystem.buyOperation(this, trader, wantedUnit, amount, super.getWorld());
     }
 
-    public void buy(Trader trader, InvestmentFundUnit wantedUnit, float amount){
-        //! With that trading system only with good currency you can but anything that may lead to no buy of some UNIT at all :(
-        if (!checkConstraints(trader, wantedUnit)) return;
-
-        HashMap<String, Float> traderInvestmentBudget = trader.getInvestmentBudget();
-        String registeredCurrencyName = this.registeredCurrency.getName();
-        float cost = this.registeredCurrency.calculateDifferentToThis(wantedUnit, amount); // how much of our trading currency we must pay for this asset!
-
-        if (traderInvestmentBudget.containsKey(registeredCurrencyName) && traderInvestmentBudget.get(registeredCurrencyName) >= cost){
-            trader.addBudget(wantedUnit, amount);
-            trader.subtractBudget(registeredCurrency, cost); //! This yield to negative Amount in circulation of an asset as we Subtract more of it then we possible bought previously!!.
-        }
-        else {
-            //System.out.println(this.registeredCurrency.getName() + " " + cost + " " + traderInvestmentBudget.get(registeredCurrencyName));
-            System.out.println("Not enough money to buy on investment fund! Or you just don't have our currency!");
-        }
+    /**
+     * Function running sellOperation on the transactionSystem
+     * 
+     * @param trader
+     * @param soldUnit
+     * @param amount
+     */
+    public void sell(Trader trader, Asset soldUnit, float amount) {
+        transactionSystem.sellOperation(this, trader, soldUnit, amount, super.getWorld());
     }
 
-    public void sell(Trader trader, InvestmentFundUnit soldUnit, float amount){
-        if (!checkConstraints(trader, soldUnit)) return;
-
-        HashMap<String, Float> traderInvestmentBudget = trader.getInvestmentBudget();
-        float income = this.registeredCurrency.calculateDifferentToThis(soldUnit, amount);
-        trader.addBudget(this.registeredCurrency, income);
-        trader.subtractBudget(soldUnit, amount);
-        
-    }
-
+    /**
+     * @return Currency
+     */
     public Currency getRegisteredCurrency() {
         return this.registeredCurrency;
     }
 
-    public void IssueFundUnit(){
-        issuedFundsAmount +=1;
+    /**
+     * Function that will generate new Fund Unit and add it to the world
+     */
+    public void issueFundUnit() {
+        issuedFundsAmount += 1;
         System.out.println("Fund: " + this.getName() + "Issue new unit");
-        issuedFundsUnit.add(super.getWorld().addNewInvestmentFundUnit(this));
+        InvestmentFundUnit unit = super.getWorld().getObjectsAdder().addNewInvestmentFundUnit(this);
+        issuedFundsUnit.put(unit.getName(), unit);
     }
 
-    public int getIssuedFundsAmount(){
+    /**
+     * @return int
+     */
+    public int getIssuedFundsAmount() {
         return issuedFundsAmount;
     }
 
-    public void fillGridPane(GridPane traderDetails){
+    /**
+     * Function filling gridPane with additional details specific to InvestmentFund
+     * 
+     * @param traderDetails
+     */
+    public void fillGridPane(GridPane traderDetails) {
         super.fillGridPane(traderDetails);
-        String [] filledDetails = {menagerFirstName, menagerLastName, registeredCurrency.getName()};
-        for (int i = 0; i < filledDetails.length; i++) {
-            Label l = new Label();
-            l.setText(moreDetails[i] + filledDetails[i]);
-            traderDetails.add(l, 0, i + 4);
-        }
+        String[] filledDetails = { menagerFirstName, menagerLastName, registeredCurrency.getName() };
+        super.addLabelsToPane(traderDetails, moreDetails, filledDetails, 4);
     }
-    
-    public MainPanelController getController(){
+
+    /**
+     * Since this class by issuing Funds Unit may change counter this is needed
+     * 
+     * @return MainPanelController
+     */
+    public MainPanelController getController() {
         return controller;
     }
 
     @Override
-    public void operation(){
+    public void operation() {
         super.operation();
-        //! I tried to issue funds here however I got error from JavaFX that I'm trying to change it from different thread etc.
     }
 
-    public ArrayList<InvestmentFundUnit> getIssuedFundsUnit(){
+    /**
+     * @return ArrayList<InvestmentFundUnit>
+     */
+    public ArrayList<Asset> getAvailableAssets() {
+        return new ArrayList<Asset>(issuedFundsUnit.values());
+    }
+
+    @Override
+    public String getSearchString() {
+        return super.getSearchString() + menagerFirstName;
+    }
+
+    @Override
+    public HashMap<String, Asset> getAvailableAssetsHashMap() {
         return issuedFundsUnit;
+    }
+
+    @Override
+    public float getPercentageOperationCost() {
+        return fundPercentageProfit;
+    }
+
+    @Override
+    public Currency getTradingCurrency() {
+        return registeredCurrency;
     }
 }

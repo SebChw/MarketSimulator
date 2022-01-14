@@ -1,4 +1,4 @@
-package market.observers;
+package market.interfaces;
 
 import market.traders.Company;
 
