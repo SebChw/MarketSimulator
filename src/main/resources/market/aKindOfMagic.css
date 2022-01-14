@@ -1,0 +1,41 @@
+.button {
+  -fx-background-color: #c3c4c4, linear-gradient(#d6d6d6 50%, white 100%),
+    radial-gradient(
+      center 50% -40%,
+      radius 200%,
+      #e6e6e6 45%,
+      rgba(230, 230, 230, 0) 50%
+    );
+  -fx-background-radius: 30;
+  -fx-background-insets: 0, 1, 1;
+  -fx-text-fill: black;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 3, 0, 0, 1);
+  -fx-padding: 5px;
+}
+
+.slider {
+  -fx-control-inner-background: #fbeaeb;
+  -fx-tick-label-font-size: 20px;
+}
+
+.slider .track {
+  -fx-pref-height: 20;
+}
+#mainBox {
+  -fx-padding: 10px;
+}
+#middlePane {
+  -fx-border-color: black;
+  -fx-border-width: 2px 0px 2px 0px;
+  -fx-padding: 10px 0px 10px 0px;
+}
+.slider .thumb {
+  -fx-background-color: #2f3c7e;
+  -fx-pref-height: 30;
+  -fx-pref-width: 30;
+}
+
+.root {
+  -fx-font-size: 10pt;
+  -fx-font-family: Helvetica, Arial, sans-serif;
+}

@@ -12,8 +12,9 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="729.0" prefWidth="1142.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="729.0" prefWidth="1142.0" style="-fx-background-color: #F7CAC9;" stylesheets="@aKindOfMagic.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <GridPane fx:id="centerPane" prefHeight="698.0" prefWidth="1059.0" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -25,47 +26,68 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <AnchorPane prefHeight="200.0" prefWidth="1000.0" style="-fx-background-color: green;">
+            <AnchorPane prefHeight="200.0" prefWidth="1000.0">
                <children>
                   <TableView fx:id="assetTable" layoutX="17.0" layoutY="85.0" prefHeight="571.0" prefWidth="400.0" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="81.0" />
                   <TextField fx:id="assetSearch" layoutX="49.0" layoutY="35.0" AnchorPane.leftAnchor="49.0" AnchorPane.rightAnchor="49.0">
                      <tooltip>
                         <Tooltip text="You can search assets by" />
                      </tooltip></TextField>
-                  <Label fx:id="assetLabel" layoutX="49.0" layoutY="14.0" prefHeight="21.0" prefWidth="182.0" text="Assets" />
+                  <Label fx:id="assetLabel" layoutX="49.0" layoutY="8.0" prefHeight="21.0" prefWidth="182.0" text="Assets">
+                     <font>
+                        <Font size="18.0" />
+                     </font></Label>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="3000.0" style="-fx-background-color: yellow;" GridPane.columnIndex="1">
+            <AnchorPane prefHeight="200.0" prefWidth="3000.0" GridPane.columnIndex="1">
                <children>
                   <TableView fx:id="marketTable" layoutX="34.0" layoutY="83.0" prefHeight="576.0" prefWidth="400.0" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="81.0" />
-                  <TextField fx:id="marketSearch" layoutX="41.0" layoutY="35.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="57.0" />
-                  <Label fx:id="marketLabel" layoutX="49.0" layoutY="14.0" prefHeight="21.0" prefWidth="156.0" text="Markets" />
+                  <TextField fx:id="marketSearch" layoutX="41.0" layoutY="35.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="57.0">
+                     <tooltip>
+                        <Tooltip text="You can search Markets using this textField!" />
+                     </tooltip></TextField>
+                  <Label fx:id="marketLabel" layoutX="50.0" layoutY="8.0" prefHeight="21.0" prefWidth="156.0" text="Markets">
+                     <font>
+                        <Font size="18.0" />
+                     </font></Label>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="10000.0" style="-fx-background-color: blue;" GridPane.columnIndex="2">
+            <AnchorPane prefHeight="200.0" prefWidth="10000.0" GridPane.columnIndex="2">
                <children>
                   <TableView fx:id="traderTable" layoutX="14.0" layoutY="79.0" prefHeight="575.0" prefWidth="400.0" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="81.0" />
-                  <TextField fx:id="traderSearch" layoutX="49.0" layoutY="37.0" AnchorPane.leftAnchor="49.0" AnchorPane.rightAnchor="49.0" />
-                  <Label fx:id="traderLabel" layoutX="49.0" layoutY="14.0" prefHeight="21.0" prefWidth="117.0" text="Traders" />
+                  <TextField fx:id="traderSearch" layoutX="48.0" layoutY="37.0" AnchorPane.leftAnchor="48.0" AnchorPane.rightAnchor="50.0">
+                     <tooltip>
+                        <Tooltip text="You can search Traders using this textField" />
+                     </tooltip></TextField>
+                  <Label fx:id="traderLabel" layoutX="49.0" layoutY="10.0" prefHeight="21.0" prefWidth="117.0" text="Traders">
+                     <font>
+                        <Font size="18.0" />
+                     </font></Label>
                </children>
             </AnchorPane>
          </children>
       </GridPane>
    </center>
    <top>
-      <AnchorPane prefHeight="47.0" prefWidth="922.0" style="-fx-background-color: gray;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="47.0" prefWidth="922.0" style="-fx-background-color: #E7CAC9;" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="39.0" layoutY="13.0" prefHeight="21.0" prefWidth="308.0" text="Welcome to the market Simulator!" />
-            <Label fx:id="dateLabel" layoutX="426.0" layoutY="13.0" prefHeight="21.0" prefWidth="349.0" text="Current Date" />
+            <Label layoutX="33.0" layoutY="7.0" prefHeight="45.0" prefWidth="495.0" text="Welcome to the market Simulator!">
+               <font>
+                  <Font size="30.0" />
+               </font></Label>
+            <Label fx:id="dateLabel" layoutX="571.0" layoutY="7.0" prefHeight="45.0" prefWidth="487.0" text="Current Date">
+               <font>
+                  <Font size="30.0" />
+               </font></Label>
          </children>
       </AnchorPane>
    </top>
    <left>
-      <VBox prefHeight="682.0" prefWidth="200.0" style="-fx-background-color: pink;" BorderPane.alignment="CENTER">
+      <VBox id="mainBox" prefHeight="682.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane prefHeight="500.0">
+            <AnchorPane prefHeight="500.0" styleClass="pane">
                <children>
-                  <GridPane fx:id="worldDetails" layoutX="14.0" layoutY="14.0" prefHeight="30.0" prefWidth="182.0" vgap="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="6.0">
+                  <GridPane fx:id="worldDetails" layoutX="14.0" layoutY="14.0" prefHeight="30.0" prefWidth="182.0" vgap="5.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="6.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
@@ -75,11 +97,11 @@
                   </GridPane>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="500.0">
+            <AnchorPane id="middlePane" prefHeight="500.0" styleClass="pane">
                <children>
-                  <VBox layoutX="-1.0" prefWidth="500.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                  <VBox alignment="TOP_CENTER" layoutX="-1.0" prefHeight="230.0" prefWidth="101.0" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="99.0">
                      <children>
-                        <Label prefWidth="100.0" text="Create" />
+                        <Label prefHeight="20.0" prefWidth="45.0" text="Create" textAlignment="CENTER" />
                         <Button mnemonicParsing="false" onAction="#addMarket" prefWidth="100.0" text="Market" />
                         <Button layoutX="10.0" layoutY="31.0" mnemonicParsing="false" onAction="#addCurrency" prefWidth="100.0" text="Currency" />
                         <Button layoutX="10.0" layoutY="62.0" mnemonicParsing="false" onAction="#addCommodity" prefWidth="100.0" text="Commodity" />
@@ -88,7 +110,7 @@
                         <Button layoutX="10.0" layoutY="155.0" mnemonicParsing="false" onAction="#addDynamicIndex" prefWidth="100.0" text="Dynamic Index" />
                      </children>
                   </VBox>
-                  <VBox layoutX="99.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.leftAnchor="102.0" AnchorPane.rightAnchor="0.0">
+                  <VBox alignment="TOP_CENTER" layoutX="99.0" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.leftAnchor="102.0" AnchorPane.rightAnchor="0.0">
                      <children>
                         <Label text="See" />
                         <Button mnemonicParsing="false" onAction="#showAssets" prefWidth="100.0" text="Assets" />
@@ -98,14 +120,12 @@
                   </VBox>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="500.0">
+            <AnchorPane prefHeight="500.0" styleClass="pane">
                <children>
-                  <Label layoutX="14.0" layoutY="81.0" text="transaction probability:" />
-                  <Slider fx:id="transactionProbabilitySlider" blockIncrement="0.01" layoutX="20.0" layoutY="29.0" max="1.0" showTickLabels="true" showTickMarks="true" value="0.5" AnchorPane.bottomAnchor="154.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="29.0" />
-                  <Label fx:id="transactionProbabilityLabel" layoutX="174.0" layoutY="81.0" text="0.50" />
-                  <Slider fx:id="bullProbabilitySlider" blockIncrement="0.01" layoutX="20.0" layoutY="129.0" max="1.0" showTickLabels="true" showTickMarks="true" value="0.5" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="50.0" />
-                  <Label layoutX="24.0" layoutY="174.0" text="bull probability: " />
-                  <Label fx:id="bullProbabilityLabel" layoutX="151.0" layoutY="174.0" text="0.50" />
+                  <Slider fx:id="transactionProbabilitySlider" blockIncrement="0.01" layoutX="2.0" layoutY="10.0" max="1.0" prefHeight="56.0" prefWidth="191.0" showTickLabels="true" value="0.5" AnchorPane.bottomAnchor="154.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="10.0" />
+                  <Label fx:id="transactionProbabilityLabel" layoutX="14.0" layoutY="70.0" text="transaction probability: 0.50" />
+                  <Slider fx:id="bullProbabilitySlider" blockIncrement="0.01" layoutX="2.0" layoutY="110.0" max="1.0" prefHeight="57.0" prefWidth="195.0" showTickLabels="true" value="0.5" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="3.0" />
+                  <Label fx:id="bullProbabilityLabel" layoutX="14.0" layoutY="167.0" text="bull probability: 0.50" />
                </children>
             </AnchorPane>
          </children>

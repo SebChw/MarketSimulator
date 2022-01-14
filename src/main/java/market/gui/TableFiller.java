@@ -2,6 +2,7 @@ package market.gui;
 
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -100,9 +101,13 @@ public class TableFiller {
      * @param root
      */
     private void popUp(Parent root) {
+        Image icon = new Image(TableFiller.class.getResourceAsStream("coin.png")); // this url is taken from javaFX
+                                                                                   // docs
+
         Stage stage = new Stage();
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.getIcons().add(icon);
         stage.show();
     }
 

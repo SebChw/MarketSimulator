@@ -8,7 +8,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="506.0" prefWidth="716.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <LineChart fx:id="assetValueChart" layoutX="14.0" layoutY="53.0" title="Asset value">
+      <LineChart fx:id="assetValueChart" layoutX="14.0" layoutY="53.0" title="Asset value" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="202.0" AnchorPane.topAnchor="53.0">
         <xAxis>
           <NumberAxis side="BOTTOM" />
         </xAxis>
@@ -16,7 +16,7 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </LineChart>
-      <Button fx:id="changeScale" layoutX="545.0" layoutY="378.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="117.0" text="percentage" />
-      <ListView fx:id="assetsListView" layoutX="538.0" layoutY="38.0" prefHeight="326.0" prefWidth="132.0" />
+      <Button fx:id="changeScale" layoutX="545.0" layoutY="378.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="117.0" text="percentage" AnchorPane.bottomAnchor="76.0" AnchorPane.rightAnchor="54.0" />
+      <ListView fx:id="assetsListView" layoutX="538.0" layoutY="38.0" prefHeight="326.0" prefWidth="132.0" AnchorPane.bottomAnchor="142.0" AnchorPane.rightAnchor="46.0" AnchorPane.topAnchor="38.0" />
    </children>
 </AnchorPane>

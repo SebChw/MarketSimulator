@@ -82,7 +82,6 @@ public class World {
      */
     public void setTransactionProbability(float probability) {
         transactionProbability = probability;
-        System.out.println(transactionProbability);
     }
 
     /**
@@ -97,7 +96,6 @@ public class World {
      */
     public void setBullProbability(float probability) {
         bullProbability = probability;
-        System.out.println(bullProbability);
     }
 
     public void updateAllRates() {

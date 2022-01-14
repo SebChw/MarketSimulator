@@ -56,7 +56,6 @@ public class AppInitializer extends Application {
       Image icon = new Image(AppInitializer.class.getResourceAsStream("coin.png")); // this url is taken from javaFX
                                                                                     // docs
       stage.getIcons().add(icon);
-      stage.setTitle("Market Simulator");
 
       stage.setScene(scene); // adding scene to the stage -> running everything
 

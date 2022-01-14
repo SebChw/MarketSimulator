@@ -3,12 +3,16 @@ package market.gui;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -52,6 +56,14 @@ public class MainPanelController implements Initializable {
     private TableView<Trader> traderTable;
     @FXML
     private GridPane worldDetails;
+    @FXML
+    private Slider transactionProbabilitySlider;
+    @FXML
+    private Label transactionProbabilityLabel;
+    @FXML
+    private Slider bullProbabilitySlider;
+    @FXML
+    private Label bullProbabilityLabel;
 
     private ObservableList<Market> marketsData = FXCollections.observableArrayList();
     private FilteredList<Market> filteredMarkets = new FilteredList<>(marketsData, b -> true);
@@ -101,6 +113,26 @@ public class MainPanelController implements Initializable {
         tableFiller.fillTraderTable(traderTable, filteredTraders);
         tableFilter.searchableObjectsFilter(traderSearch, filteredTraders);
 
+        transactionProbabilityLabel.textProperty().bind(
+                Bindings.format(
+                        "transaction probability: %.2f",
+                        transactionProbabilitySlider.valueProperty()));
+
+        bullProbabilityLabel.textProperty().bind(
+                Bindings.format("bull probability: %.2f", bullProbabilitySlider.valueProperty()));
+
+        transactionProbabilitySlider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                world.setTransactionProbability(newValue.floatValue());
+            }
+        });
+
+        bullProbabilitySlider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                world.setBullProbability(newValue.floatValue());
+            }
+        });
+
     }
 
     /**
@@ -112,17 +144,17 @@ public class MainPanelController implements Initializable {
     }
 
     private void setVisible(int index, TextField text, TableView<?> table, Label label) {
-        centerPane.getColumnConstraints().get(index).setMaxWidth(2000);
-        text.setVisible(true);
-        table.setVisible(true);
-        label.setVisible(true);
-    }
-
-    private void setInvisible(int index, TextField text, TableView<?> table, Label label) {
         centerPane.getColumnConstraints().get(index).setMaxWidth(0);
         text.setVisible(false);
         table.setVisible(false);
         label.setVisible(false);
+    }
+
+    private void setInvisible(int index, TextField text, TableView<?> table, Label label) {
+        centerPane.getColumnConstraints().get(index).setMaxWidth(2000);
+        text.setVisible(true);
+        table.setVisible(true);
+        label.setVisible(true);
     }
 
     private void refreshTable(TableView<?> table) {
