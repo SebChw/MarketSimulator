@@ -1,5 +1,7 @@
 package market.assets;
 
+import market.world.Constants;
+
 /**
  * Class representing commodity In the world.
  */
@@ -9,7 +11,7 @@ public class Commodity extends AssetBackedByCurrency {
     public Commodity(String name, String tradingUnit, Currency tradingCurrency, Float startingRate) {
         // At the beginning there is no commopdities in circulation everything start
         // when some user buy it.
-        super(name, "Commodity", 0, tradingCurrency, startingRate);
+        super(name, Constants.commodityType, 0, tradingCurrency, startingRate);
         this.tradingUnit = tradingUnit;
     }
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import market.interfaces.CompanyObserver;
 import market.traders.Company;
+import market.world.Constants;
 
 /**
  * Extension of simple market index. This is dynamic. It means if some company
@@ -16,7 +17,7 @@ public class DynamicMarketIndex extends MarketIndex implements CompanyObserver {
 
     public DynamicMarketIndex(String name, ArrayList<Company> companies, String backingAsset,
             CompaniesFilter companiesFilter, int maxNumOfCompanies) {
-        super(name, "Dynamic Market Index", companies, backingAsset);
+        super(name, Constants.dynamicIndexType, companies, backingAsset);
         this.companiesFilter = companiesFilter;
         this.maxNumOfCompanies = maxNumOfCompanies;
     }
@@ -36,8 +37,6 @@ public class DynamicMarketIndex extends MarketIndex implements CompanyObserver {
      */
     @Override
     public void update(Company company) {
-        // System.out.println("Company " + company.getName() + "tries to be updated
-        // index");
         for (Company c : this.getCompanies()) {
             if (c.getName().equals(company.getName())) {
                 // System.out.println(company.getName() + c.getName());

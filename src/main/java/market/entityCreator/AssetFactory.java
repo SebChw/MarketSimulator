@@ -1,11 +1,14 @@
 package market.entityCreator;
 
 import market.traders.*;
+import market.world.Constants;
 import market.world.World;
 import market.assets.Currency;
 import market.assets.Asset;
 import market.assets.Commodity;
 import market.assets.InvestmentFundUnit;
+
+import java.io.Serializable;
 import java.util.*;
 import market.assets.marketIndex.MarketIndex;
 import market.assets.marketIndex.*;
@@ -13,7 +16,7 @@ import market.assets.marketIndex.*;
 /**
  * Function for creating new Assets
  */
-public class AssetFactory {
+public class AssetFactory implements Serializable {
     private SemiRandomValuesGenerator attributesGenerator;
     private String mainAsset;
 
@@ -119,8 +122,9 @@ public class AssetFactory {
     public InvestmentFundUnit createFundUnit(InvestmentFund issuedBy, ArrayList<Asset> availableAssets) {
         HashMap<String, Float> boughtAssets = new HashMap<String, Float>();
         for (Asset asset : availableAssets) {
-            if (asset.getType().equals("Investment Fund Unit") || asset.getType().equals("Market Index")
-                    || asset.getType().equals("Share"))
+            if (asset.getType().equals(Constants.investmentFundUnitType) || asset.getType().equals(Constants.indexType)
+                    || asset.getType().equals(Constants.shareType)
+                    || asset.getType().equals(Constants.dynamicIndexType))
                 continue;
 
             if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.1) {

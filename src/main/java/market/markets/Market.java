@@ -1,6 +1,5 @@
 package market.markets;
 
-//! TO DO!! ADD INTERFACE FOR BUYING AND SELLING
 import market.assets.Currency;
 import market.interfaces.Dealer;
 import market.interfaces.Searchable;
@@ -10,9 +9,11 @@ import java.util.HashMap;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import market.traders.Trader;
 import market.transactions.*;
+import market.world.Constants;
 import market.world.World;
 import market.assets.Asset;
 
@@ -20,7 +21,7 @@ import market.assets.Asset;
  * Market is a container for Assets that can be bought on it. Market add
  * additional cost to each transaction performed on it
  */
-public class Market implements Searchable, Dealer {
+public class Market implements Searchable, Dealer, Serializable {
     private String name;
     private String country;
     private String city;
@@ -48,7 +49,7 @@ public class Market implements Searchable, Dealer {
         this.availableAssets = availableAssets;
         this.world = world;
 
-        this.assetType = world.getParticularAsset(availableAssets.keySet().iterator().next()).getType();
+        this.assetType = initializeAssetType();
 
     }
 
@@ -182,4 +183,13 @@ public class Market implements Searchable, Dealer {
     public Currency getTradingCurrency() {
         return tradingCurrency;
     }
+
+    public String initializeAssetType() {
+        String type = world.getParticularAsset(availableAssets.keySet().iterator().next()).getType();
+        if (type != Constants.currencyType && type != Constants.commodityType)
+            type = Constants.shareType;
+
+        return type;
+    }
+
 }

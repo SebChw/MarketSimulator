@@ -5,6 +5,7 @@ import market.assets.*;
 import market.assets.marketIndex.*;
 import market.markets.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -18,13 +19,12 @@ import market.gui.MainPanelController;
  * Can write different adder that will be able to do it e.g with only user
  * specified values.
  */
-public class ObjectsAdder {
+public class ObjectsAdder implements Serializable {
 
     private WorldContainer worldContainer;
     private TraderFactory TraderFactory;
     private AssetFactory AssetFactory;
     private MarketFactory MarketFactory;
-
     private Random randomGenerator = new Random();
 
     private ObjectCounter objectCounter;
@@ -35,7 +35,6 @@ public class ObjectsAdder {
         this.TraderFactory = new TraderFactory(world);
         this.MarketFactory = new MarketFactory(world);
         this.objectCounter = objectCounter;
-
     }
 
     /**
@@ -57,7 +56,8 @@ public class ObjectsAdder {
      * 
      * @return Commodity
      */
-    public Commodity addNewCommodity() {
+    public Commodity addNewCommodity(MainPanelController controller) {
+        assertCurrencyConstraint(controller);
         Commodity com = this.AssetFactory.createCommodity(worldContainer.getCurrencies());
         worldContainer.addNewCommodity(com);
         objectCounter.changeNumberOfCommodities(1);
@@ -72,32 +72,31 @@ public class ObjectsAdder {
      * 
      * @return Company
      */
-    public Company addNewCompany() {
+    public Company addNewCompany(MainPanelController controller) {
         Company company = null;
+        assertCurrencyConstraint(controller);
         // In that moment we should create Share object too!
         // We can create that object only having some currencies in the world
-        if (objectCounter.getNumberOfCurrencies() > 0) {
-            company = this.TraderFactory.createCompany(worldContainer.getCurrencies(),
-                    worldContainer.getDynamicMarketIndices());
+        company = this.TraderFactory.createCompany(worldContainer.getCurrencies(),
+                worldContainer.getDynamicMarketIndices());
 
-            worldContainer.addNewCompany(company);
-            objectCounter.changeNumberOfCompanies(1);
+        worldContainer.addNewCompany(company);
+        objectCounter.changeNumberOfCompanies(1);
 
-            Share share = company.getShare();
-            worldContainer.addNewShare(share);
-            addAssetToMarkets(share);
+        Share share = company.getShare();
+        worldContainer.addNewShare(share);
+        addAssetToMarkets(share);
 
-            // As we add company we must update all dynamic indices
-            for (DynamicMarketIndex index : worldContainer.getDynamicMarketIndices()) {
-                index.update(company);
-                index.updateIndex();
-            }
-        } else {
-            System.out.println("Can't create Company withouth any Currencies!");
+        // As we add company we must update all dynamic indices
+        for (DynamicMarketIndex index : worldContainer.getDynamicMarketIndices()) {
+            index.update(company);
+            index.updateIndex();
         }
 
         TraderFactory.fillInitialBudgetRandomly(worldContainer.getCurrencies(), company);
-        (new Thread(company)).start();
+        Thread t = new Thread(company);
+        worldContainer.addNewThread(company.getName(), t);
+        t.start();
         return company;
     }
 
@@ -106,12 +105,16 @@ public class ObjectsAdder {
      * 
      * @return HumanInvestor
      */
-    public HumanInvestor addNewHumanInvestor() {
+    public HumanInvestor addNewHumanInvestor(MainPanelController controller) {
+        assertCurrencyConstraint(controller);
+
         HumanInvestor human = this.TraderFactory.createHumanInvestor(worldContainer.getCurrencies());
         worldContainer.addNewHumanInvestor(human);
         objectCounter.changeNumberOfHumanInvestors(1);
         TraderFactory.fillInitialBudgetRandomly(worldContainer.getCurrencies(), human);
-        (new Thread(human)).start();
+        Thread t = new Thread(human);
+        worldContainer.addNewThread(human.getName(), t);
+        t.start();
         return human;
     }
 
@@ -124,15 +127,16 @@ public class ObjectsAdder {
      */
     public InvestmentFund addNewInvestmentFund(MainPanelController controller) {
         InvestmentFund fund = null;
-        if (objectCounter.getNumberOfCurrencies() > 0) {
-            fund = this.TraderFactory.createInvestmentFund(worldContainer.getCurrencies(), controller);
-            worldContainer.addNewInvestmentFund(fund);
-            objectCounter.changeNumberOfInvestmentFunds(1);
-        } else {
-            System.out.println("Can't create Investment Fund withouth any Currencies!");
-        }
+        assertCurrencyConstraint(controller);
+
+        fund = this.TraderFactory.createInvestmentFund(worldContainer.getCurrencies(), controller);
+        worldContainer.addNewInvestmentFund(fund);
+        objectCounter.changeNumberOfInvestmentFunds(1);
+
         TraderFactory.fillInitialBudgetRandomly(worldContainer.getCurrencies(), fund);
-        (new Thread(fund)).start();
+        Thread t = new Thread(fund);
+        worldContainer.addNewThread(fund.getName(), t);
+        t.start();
         return fund;
     }
 
@@ -141,31 +145,30 @@ public class ObjectsAdder {
      * 
      * @return Market
      */
-    public Market addNewRandomMarket() {
+    public Market addNewRandomMarket(MainPanelController controller) {
         Market market = null;
-        if (objectCounter.getNumberOfCurrencies() > 0) {
-            float uniformNumber = randomGenerator.nextFloat();
 
-            if (uniformNumber < 0.33 && !worldContainer.getShares().isEmpty()) {
-                ArrayList<Asset> allIndices = new ArrayList<Asset>();
-                allIndices.addAll(worldContainer.getMarketIndices());
-                allIndices.addAll(worldContainer.getDynamicMarketIndices());
-                market = this.MarketFactory.createMarket(worldContainer.getCurrencies(), worldContainer.getShares(),
-                        allIndices);
-            } else if (uniformNumber < 0.665 && !worldContainer.getCommodities().isEmpty()) {
-                market = this.MarketFactory.createMarket(worldContainer.getCurrencies(),
-                        worldContainer.getCommodities(), null);
-            } else {
-                market = this.MarketFactory.createMarket(worldContainer.getCurrencies(), worldContainer.getCurrencies(),
-                        null);
-            }
+        assertCurrencyConstraint(controller); // Many objects can't be created withouth any currency on the market
 
-            worldContainer.addNewMarket(market);
-            objectCounter.changeNumberOfMarkets(1);
+        float uniformNumber = randomGenerator.nextFloat();
 
+        if (uniformNumber < 0.33 && !worldContainer.getShares().isEmpty()) {
+            ArrayList<Asset> allIndices = new ArrayList<Asset>();
+            allIndices.addAll(worldContainer.getMarketIndices());
+            allIndices.addAll(worldContainer.getDynamicMarketIndices());
+            market = this.MarketFactory.createMarket(worldContainer.getCurrencies(), worldContainer.getShares(),
+                    allIndices);
+        } else if (uniformNumber < 0.665 && !worldContainer.getCommodities().isEmpty()) {
+            market = this.MarketFactory.createMarket(worldContainer.getCurrencies(),
+                    worldContainer.getCommodities(), null);
         } else {
-            System.out.println("You can't create Market Withouth any currency!");
+            market = this.MarketFactory.createMarket(worldContainer.getCurrencies(), worldContainer.getCurrencies(),
+                    null);
         }
+
+        worldContainer.addNewMarket(market);
+        objectCounter.changeNumberOfMarkets(1);
+
         return market;
     }
 
@@ -174,10 +177,12 @@ public class ObjectsAdder {
      * 
      * @return MarketIndex
      */
-    public MarketIndex addNewMarketIndex() {
+    public MarketIndex addNewMarketIndex(MainPanelController controller) {
         MarketIndex marketIndex = null;
         if (worldContainer.getCompanies().isEmpty()) {
-            System.out.println("You can'y create market Index with no companies in the world!");
+            System.out.println(
+                    "You can'y create market Index with no companies in the world! Firstly company will be added");
+            controller.addCompany();
         }
         marketIndex = this.AssetFactory.createMarketIndex(worldContainer.getCompanies());
         worldContainer.addNewMarketIndex(marketIndex);
@@ -194,9 +199,6 @@ public class ObjectsAdder {
      */
     public DynamicMarketIndex addNewDynamicMarketIndex() {
         DynamicMarketIndex marketIndex = null;
-        if (worldContainer.getCompanies().isEmpty()) {
-            System.out.println("You can't create market Index with no companies in the world!");
-        }
 
         String type = "biggest";
         if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.5)
@@ -243,6 +245,14 @@ public class ObjectsAdder {
             if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.8) {
                 market.addNewAsset(asset);
             }
+        }
+    }
+
+    private void assertCurrencyConstraint(MainPanelController controller) {
+        if (worldContainer.getCurrencies().isEmpty()) {
+            System.out.println(
+                    "You can't create this object withouth any currencies! Currency will be added automatically");
+            controller.addCurrency();
         }
     }
 }

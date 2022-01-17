@@ -3,6 +3,8 @@ package market.assets.marketIndex;
 import market.assets.Asset;
 import market.entityCreator.SemiRandomValuesGenerator;
 import market.traders.Company;
+import market.world.Constants;
+
 import java.util.ArrayList;
 
 /**
@@ -19,10 +21,9 @@ public class MarketIndex extends Asset {
      * @param startingRate what rate it has at the beginning
      */
     public MarketIndex(String name, ArrayList<Company> companies, String backingAsset) {
-        super(name, "Market Index", 0, backingAsset, 0);
+        super(name, Constants.indexType, 0, backingAsset, 0);
         this.companies = companies;
 
-        getMainBankRates().removeLastRate(); // This is done artificially to start with some rate calculated after
         updateRate();
     }
 
@@ -31,7 +32,6 @@ public class MarketIndex extends Asset {
 
         this.companies = companies;
 
-        getMainBankRates().removeLastRate(); // This is done artificially to start with some rate calculated after
         updateRate();
     }
 
@@ -43,6 +43,14 @@ public class MarketIndex extends Asset {
         for (Company company : this.companies)
             companyNames.add(company.getName());
         return super.toString() + "\n companies in Index: " + companyNames;
+    }
+
+    @Override
+    public synchronized void changeAmountInCirculation(float amount) {
+        super.amountInCirculationProperty().set(super.amountInCirculationProperty().get() + amount);
+        for (Company company : this.companies) {
+            company.getShare().changeAmountInCirculation(amount);
+        }
     }
 
     /**
@@ -139,12 +147,15 @@ public class MarketIndex extends Asset {
                 for (Company unfreezedCompany : checkedCompanies) {
                     unfreezedCompany.getShare().unfreeze(amount);
                 }
+                // System.out.println(
+                // "You can't buy this Index as this would lead to Bigger amountInCirculation of
+                // Share than available");
                 return false;
-            } else
+            } else {
                 checkedCompanies.add(company);
+            }
         }
-        System.out.println(
-                "You can't buy this Index as this would lead to Bigger amountInCirculation of Share than available");
+
         return true;
     }
 

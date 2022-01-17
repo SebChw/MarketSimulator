@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.scene.layout.GridPane;
+import market.world.Constants;
 import market.world.World;
 import market.entityCreator.*;
 
@@ -16,7 +17,7 @@ public class HumanInvestor extends Trader {
 
     public HumanInvestor(String tradingIdentifier, HashMap<String, Float> investmentBudget, String name,
             String lastName, boolean isBear, World world) {
-        super(tradingIdentifier, investmentBudget, name, "human Investor", isBear, world);
+        super(tradingIdentifier, investmentBudget, name, Constants.humanTraderType, isBear, world);
         this.lastName = lastName;
     }
 

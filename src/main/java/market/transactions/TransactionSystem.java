@@ -5,6 +5,9 @@ import market.traders.Trader;
 import market.world.World;
 import market.assets.Asset;
 
+/**
+ * Interface allowing for buying and selling stuff
+ */
 public interface TransactionSystem {
     public void buyOperation(Dealer dealer, Trader trader, Asset wantedAsset, float amount,
             World world);

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 import market.assets.Asset;
@@ -17,7 +18,7 @@ import market.world.World;
  * 
  * All functions get**Data returns a HashMap with keys as attributes names
  */
-public class SemiRandomValuesGenerator {
+public class SemiRandomValuesGenerator implements Serializable {
     private String[] commodityNames = { "Cereal", "Silver", "Gas", "Oil", "Copper" };
     private String[] currencyNames = { "zloty", "euro", "dolar", "pound", "yang" };
     private String[] countriesNames = { "Poland", "US", "Great Britain", "China", "Australia", "Italy", "Spain",

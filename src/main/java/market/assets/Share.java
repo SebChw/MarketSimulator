@@ -1,6 +1,7 @@
 package market.assets;
 
 import market.traders.Company;
+import market.world.Constants;
 import market.entityCreator.SemiRandomValuesGenerator;
 
 /** Class representing share in our world */
@@ -13,11 +14,15 @@ public class Share extends AssetBackedByCurrency {
     private float issuedShares;
 
     public Share(String name, float availableShares, Company company, Float startingRate) {
-        super(name, "Share", 0, company.getRegisteredCurrency(), startingRate);
+        super(name, Constants.shareType, 0, company.getRegisteredCurrency(), startingRate);
         this.company = company;
         this.issuedShares = availableShares;
         this.availableShares = availableShares;
 
+    }
+
+    public float getIssuedShares() {
+        return issuedShares;
     }
 
     /**
@@ -39,12 +44,13 @@ public class Share extends AssetBackedByCurrency {
     public float getPossibleAmount() {
         // ! Here if there is no more Shares to buy we must be carefull as we will have
         // 0 available shares
-        if (this.availableShares < 1) {
-            System.out.println(this.company.getName() + " " + this.availableShares);
+        float available = this.availableShares;
+        if (available < 1) {
+            // System.out.println(this.company.getName() + " " + this.availableShares);
             return 0;
         }
-        return SemiRandomValuesGenerator.getRandomIntNumber((int) this.availableShares) + 1; // need + 1 as we need
-                                                                                             // rande [1, available]
+        return SemiRandomValuesGenerator.getRandomIntNumber((int) available) + 1; // need + 1 as we need
+                                                                                  // rande [1, available]
     }
 
     /**
@@ -80,8 +86,9 @@ public class Share extends AssetBackedByCurrency {
         }
         synchronized (this) {
             if (availableShares < amount) {
-                System.out.println(
-                        "You Can't buy this share as this would lead to amount In Circulation > IssuedShares!");
+                // System.out.println(
+                // "You Can't buy this share as this would lead to amount In Circulation >
+                // IssuedShares!");
                 return false;
             }
             availableShares -= amount; // ! Im Freezing this shares!
@@ -113,8 +120,9 @@ public class Share extends AssetBackedByCurrency {
         if (amount < 0) {
             // I NEED TO SUBTRACT AS WHEN IM SELLING THEN amount is negative!
             // ! This was the biggest bug I've made and it was hard to find itp
-            this.availableShares -= amount; // ! DONT NEED TO DO THIS IM DOING IT DURING UNFREEZING ILL SHOULD DO THIS
-                                            // ONLY WHEN IM SELLING. and sellin is represented by negative amount
+            this.availableShares -= amount; // ! DONT NEED TO DO THIS IM DOING IT DURING
+            // UNFREEZING ILL SHOULD DO THIS
+            // ONLY WHEN IM SELLING. and sellin is represented by negative amount
         }
 
         // ! Throw exception here!

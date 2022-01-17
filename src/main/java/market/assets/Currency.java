@@ -2,12 +2,14 @@ package market.assets;
 
 import java.util.HashSet;
 
+import market.world.Constants;
+
 /** Class representing Currency in our world. */
 public class Currency extends Asset {
     private HashSet<String> countriesWhereLegal;
 
     public Currency(String name, HashSet<String> countriesWhereLegal, String backingAsset, float startingRate) {
-        super(name, "Currency", 0, backingAsset, startingRate);
+        super(name, Constants.currencyType, 0, backingAsset, startingRate);
         this.countriesWhereLegal = countriesWhereLegal;
     }
 

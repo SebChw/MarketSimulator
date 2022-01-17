@@ -3,6 +3,7 @@ package market.traders;
 import market.markets.Market;
 import market.world.World;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,15 +25,17 @@ import market.interfaces.Searchable;
 /**
  * Base class for all types of object that can perform some trading on a market.
  */
-public class Trader implements Runnable, Searchable {
+public class Trader implements Runnable, Searchable, Serializable {
     private String tradingIdentifier;
     private HashMap<String, Float> investmentBudget = new HashMap<String, Float>();
     private String name;
     private String type;
-    private SimpleFloatProperty budgetInGold = new SimpleFloatProperty(0);
+    private transient SimpleFloatProperty budgetInGold = new SimpleFloatProperty(0);
     private String[] details = { "Id: ", "Type: ", "Name: ", "Is Bear: " };
     Boolean isBear;
     private World world;
+
+    private ArrayList<Float> properties = new ArrayList<Float>();
 
     /**
      * 
@@ -99,10 +102,11 @@ public class Trader implements Runnable, Searchable {
     }
 
     public void tradeOnMarket(String operation) {
-        ArrayList<Market> availableMarkets = world.getWorldContainer().getAllMarkets();
-        Market market = availableMarkets.get(SemiRandomValuesGenerator.getRandomArrayIndex(availableMarkets));
-
-        tradeOn(operation, market);
+        if (!world.getWorldContainer().getAllMarkets().isEmpty()) {
+            ArrayList<Market> availableMarkets = world.getWorldContainer().getAllMarkets();
+            Market market = availableMarkets.get(SemiRandomValuesGenerator.getRandomArrayIndex(availableMarkets));
+            tradeOn(operation, market);
+        }
     }
 
     /**
@@ -303,7 +307,9 @@ public class Trader implements Runnable, Searchable {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
+            System.out.println(
+                    "Thread was interrupted, stopping!");
         }
 
         // Now perform some random buing/selling/increasing budget with some probability
@@ -322,6 +328,7 @@ public class Trader implements Runnable, Searchable {
         if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < transactionProbability) {
             tradeOnMarket("sell");
         }
+
     }
 
     @Override
@@ -329,10 +336,27 @@ public class Trader implements Runnable, Searchable {
         while (AppInitializer.isRunning) {
             operation();
         }
+        System.out.println("Thread: " + getName() + " Has done it's job and is being removed!");
+        world.getWorldContainer().getAllThreads().remove(getName());
+
     }
 
     @Override
     public String getSearchString() {
         return name + type + tradingIdentifier;
+    }
+
+    /**
+     * Writes all not serializable objects to serializable ones
+     */
+    public void setProperties() {
+        properties.add(budgetInGold.get());
+    }
+
+    /**
+     * Write previosult saved parameters of serializable objects
+     */
+    public void readProperties() {
+        budgetInGold = new SimpleFloatProperty(properties.get(0));
     }
 }

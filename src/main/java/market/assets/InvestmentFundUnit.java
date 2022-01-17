@@ -2,6 +2,7 @@ package market.assets;
 
 import market.entityCreator.SemiRandomValuesGenerator;
 import market.traders.InvestmentFund;
+import market.world.Constants;
 import market.world.World;
 
 import java.util.HashMap;
@@ -17,12 +18,11 @@ public class InvestmentFundUnit extends AssetBackedByCurrency {
 
     public InvestmentFundUnit(String name, InvestmentFund issuedBy,
             HashMap<String, Float> boughtAssets, World world) {
-        super(name, "Investment Fund Unit", 0, issuedBy.getRegisteredCurrency(), 0f);
+        super(name, Constants.investmentFundUnitType, 0, issuedBy.getRegisteredCurrency(), 0f);
         this.issuedBy = issuedBy;
         this.boughtAssets = boughtAssets;
         this.world = world;
 
-        getMainBankRates().removeLastRate(); // This is done artificially to start with some rate calculated after
         updateRate();
 
     }

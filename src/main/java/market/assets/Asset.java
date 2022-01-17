@@ -1,5 +1,8 @@
 package market.assets;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -11,13 +14,14 @@ import market.entityCreator.SemiRandomValuesGenerator;
  * This is root class for all assets available in the market
  * 
  */
-public abstract class Asset implements Searchable {
+public abstract class Asset implements Searchable, Serializable {
     private String name;
-    private volatile SimpleFloatProperty amountInCirculation;
+    private transient volatile SimpleFloatProperty amountInCirculation;
     private String type;
-    private volatile SimpleFloatProperty hypeLevel = new SimpleFloatProperty(0);
-    private volatile SimpleIntegerProperty amountOfOwners = new SimpleIntegerProperty(0);
+    private transient volatile SimpleFloatProperty hypeLevel = new SimpleFloatProperty(0);
+    private transient volatile SimpleIntegerProperty amountOfOwners = new SimpleIntegerProperty(0);
     private ExchangeRatesProvider mainBankRates;
+    private ArrayList<Float> properties = new ArrayList<Float>();
 
     public Asset(String name, String type, float amountInCirculation, String backingAsset, float startingRate) {
         this.name = name;
@@ -210,5 +214,23 @@ public abstract class Asset implements Searchable {
     @Override
     public String getSearchString() {
         return name + type;
+    }
+
+    /**
+     * Writes all parameters of not Serializable obejcts into an array
+     */
+    public void setProperties() {
+        properties.add(amountInCirculation.get());
+        properties.add(hypeLevel.get());
+        properties.add((float) amountOfOwners.get());
+    }
+
+    /**
+     * Write parameters to not Serializable objects that are stored in an Array
+     */
+    public void readProperties() {
+        amountInCirculation = new SimpleFloatProperty(properties.get(0));
+        hypeLevel = new SimpleFloatProperty(properties.get(1));
+        amountOfOwners = new SimpleIntegerProperty(properties.get(2).intValue());
     }
 }

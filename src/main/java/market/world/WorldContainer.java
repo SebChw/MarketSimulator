@@ -5,13 +5,14 @@ import market.assets.*;
 import market.assets.marketIndex.*;
 import market.markets.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Container for all objects stored in the world
  */
-public class WorldContainer {
+public class WorldContainer implements Serializable {
     private ArrayList<Company> companies = new ArrayList<Company>();
     private ArrayList<InvestmentFund> investmentFunds = new ArrayList<InvestmentFund>();
     private ArrayList<Trader> allTraders = new ArrayList<Trader>();
@@ -22,6 +23,7 @@ public class WorldContainer {
     private HashMap<String, Asset> allAssets = new HashMap<String, Asset>();
     private ArrayList<MarketIndex> marketIndices = new ArrayList<MarketIndex>();
     private ArrayList<DynamicMarketIndex> dynamicMarketIndices = new ArrayList<DynamicMarketIndex>();
+    private HashMap<String, Thread> allThreads = new HashMap<String, Thread>();
 
     /**
      * Add given currency to the world
@@ -81,6 +83,14 @@ public class WorldContainer {
     public void addNewDynamicMarketIndex(DynamicMarketIndex index) {
         dynamicMarketIndices.add(index);
         allAssets.put(index.getName(), index);
+    }
+
+    public void addNewThread(String name, Thread thread) {
+        allThreads.put(name, thread);
+    }
+
+    public HashMap<String, Thread> getAllThreads() {
+        return allThreads;
     }
 
     /**

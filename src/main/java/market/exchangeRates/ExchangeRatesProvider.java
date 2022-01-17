@@ -1,5 +1,6 @@
 package market.exchangeRates;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import market.priceRules.*;
@@ -8,7 +9,7 @@ import java.util.LinkedList;
 
 import javafx.scene.chart.XYChart;
 
-public class ExchangeRatesProvider {
+public class ExchangeRatesProvider implements Serializable {
 
     private String nameOfBackingAsset;
     private AssetPriceRule assetPriceRule = new BasicAssetPriceRule();
@@ -20,7 +21,9 @@ public class ExchangeRatesProvider {
 
     public ExchangeRatesProvider(String nameOfBackingAsset, float startingPrice) {
         this.nameOfBackingAsset = nameOfBackingAsset; // Main asset that Backs everything in our system
-        this.updateRate(startingPrice);
+
+        if (startingPrice != 0)
+            this.updateRate(startingPrice);
     }
 
     /**

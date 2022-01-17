@@ -13,6 +13,7 @@ import market.interfaces.CompanySubject;
 
 import java.time.LocalDate;
 
+import market.world.Constants;
 import market.world.World;
 
 /**
@@ -43,7 +44,7 @@ public class Company extends Trader implements CompanySubject {
     public Company(String tradingIdentifier, HashMap<String, Float> investmentBudget, String name,
             String ipoDate, float ipoShareValue, float openingPrice, float profit, float revenue,
             Currency registeredCurrency, boolean isBear, World world) {
-        super(tradingIdentifier, investmentBudget, name, "Company", isBear, world);
+        super(tradingIdentifier, investmentBudget, name, Constants.companyType, isBear, world);
         this.ipoDate = LocalDate.parse(ipoDate);
         this.openingPrice = openingPrice;
         this.valueOverTime.add(openingPrice);

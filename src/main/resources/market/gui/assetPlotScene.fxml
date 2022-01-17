@@ -18,5 +18,6 @@
       </LineChart>
       <Button fx:id="changeScale" layoutX="545.0" layoutY="378.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="117.0" text="percentage" AnchorPane.bottomAnchor="76.0" AnchorPane.rightAnchor="54.0" />
       <ListView fx:id="assetsListView" layoutX="538.0" layoutY="38.0" prefHeight="326.0" prefWidth="132.0" AnchorPane.bottomAnchor="142.0" AnchorPane.rightAnchor="46.0" AnchorPane.topAnchor="38.0" />
+      <Button layoutX="545.0" layoutY="438.0" mnemonicParsing="false" onAction="#clearPlot" prefHeight="52.0" prefWidth="117.0" text="Clear" />
    </children>
 </AnchorPane>

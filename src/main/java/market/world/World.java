@@ -1,9 +1,11 @@
 package market.world;
 
 import market.traders.*;
+import market.AppInitializer;
 import market.assets.*;
 import market.assets.marketIndex.*;
 
+import java.io.*;
 import java.time.LocalDate;
 
 import market.entityCreator.SemiRandomValuesGenerator;
@@ -14,7 +16,7 @@ import market.gui.MainPanelController;
  * has an interface for adding new objects to it
  * 
  */
-public class World {
+public class World implements Serializable {
     private ObjectCounter objectCounter = new ObjectCounter();
     private WorldContainer worldContainer = new WorldContainer();
     private ObjectsAdder objectsAdder;
@@ -122,10 +124,16 @@ public class World {
         return mainAsset;
     }
 
+    /**
+     * @return WorldContainer
+     */
     public WorldContainer getWorldContainer() {
         return worldContainer;
     }
 
+    /**
+     * @return ObjectsAdder
+     */
     public ObjectsAdder getObjectsAdder() {
         return objectsAdder;
     }
@@ -138,5 +146,76 @@ public class World {
         // This method Will be executed veeeery often that's Why I should provide O(1)
         // lookup
         return worldContainer.getAllAssetsHashMap().get(name);
+    }
+
+    /**
+     * First stops all threads and then restarts state of the simulation to empty.
+     */
+    public void restart() {
+        removeThreads();
+
+        objectCounter = new ObjectCounter();
+        worldContainer = new WorldContainer();
+        objectsAdder = new ObjectsAdder(worldContainer, this, objectCounter);
+
+        AppInitializer.isRunning = true;
+    }
+
+    /**
+     * Remove safely all threads in simulation
+     */
+    public void removeThreads() {
+        AppInitializer.isRunning = false;
+
+        while (!worldContainer.getAllThreads().isEmpty()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Initialize threads from all Trader being currently in simulation
+     */
+    public void addThreads() {
+        AppInitializer.isRunning = true;
+        for (Trader trader : worldContainer.getAllTraders()) {
+            System.out.println("Starting thread for the second time");
+            Thread t = new Thread(trader);
+            worldContainer.addNewThread(trader.getName(), t);
+            t.start();
+        }
+    }
+
+    /**
+     * After loading save we need to set some propertias that are not Serializable
+     */
+    public void setAllProperties() {
+        for (Asset asset : worldContainer.getAllAssets()) {
+            asset.setProperties();
+        }
+        for (Trader trader : worldContainer.getAllTraders()) {
+            trader.setProperties();
+        }
+    }
+
+    /**
+     * Before serialization we need to save some parameters that are not
+     * serializable to Arrays that are serializable.
+     * 
+     * @param controller
+     */
+    public void readAllProperties(MainPanelController controller) {
+        for (Asset asset : worldContainer.getAllAssets()) {
+            asset.readProperties();
+        }
+        for (Trader trader : worldContainer.getAllTraders()) {
+            trader.readProperties();
+        }
+        for (InvestmentFund fund : worldContainer.getInvestmentFunds()) {
+            fund.setController(controller);
+        }
     }
 }

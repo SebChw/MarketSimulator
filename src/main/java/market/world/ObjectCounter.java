@@ -1,5 +1,6 @@
 package market.world;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javafx.scene.control.Label;
@@ -9,7 +10,7 @@ import javafx.scene.layout.GridPane;
  * Class that takes care of counting amounts of each type of object in the world
  * 
  */
-public class ObjectCounter {
+public class ObjectCounter implements Serializable {
     private Integer numberOfCompanies = 0; // number of companies == number of shares!
     private Integer numberOfHumanInvestors = 0;
     private Integer numberOfInvestmentFunds = 0;
@@ -20,17 +21,10 @@ public class ObjectCounter {
     private Integer numberOfInvestmentFundUnits = 0;
     private Integer numberOfDynamicIndices = 0;
 
-    private ArrayList<Label> labels = new ArrayList<Label>();
+    private transient ArrayList<Label> labels;
 
     private String[] details = { "Companies: ", "Human Investors: ", "Investment Funds: ", "Markets: ", "Currencies: ",
             "Commodities: ", "Investments Fund Units: ", "Static Indices: ", "Dynamic Indices: " };
-
-    /**
-     * @param what
-     */
-    public void findAndUpdate(String what) {
-
-    }
 
     /**
      * @return int
@@ -189,6 +183,8 @@ public class ObjectCounter {
      * @param worldDetails
      */
     public void fillGridPane(GridPane worldDetails) {
+        worldDetails.getChildren().clear();
+        labels = new ArrayList<Label>();
         String[] filledDetails = { numberOfCompanies.toString(), numberOfHumanInvestors.toString(),
                 numberOfInvestmentFunds.toString(),
                 numberOfMarkets.toString(), numberOfCurrencies.toString(), numberOfCommodities.toString(),

@@ -4,12 +4,14 @@ import market.world.World;
 import market.assets.Currency;
 import market.assets.Asset;
 import market.markets.*;
+
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Function for creating markets
  */
-public class MarketFactory {
+public class MarketFactory implements Serializable {
     private SemiRandomValuesGenerator attributesGenerator;
 
     private World world;

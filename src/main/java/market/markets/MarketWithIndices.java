@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import market.assets.Asset;
 import market.assets.Currency;
+import market.world.Constants;
 import market.world.World;
 
 /**
@@ -12,7 +13,7 @@ import market.world.World;
  */
 public class MarketWithIndices extends Market {
 
-    private String[] availableIndices = { "Market Index", "Dynamic Market Index" };
+    private String[] availableIndices = { Constants.indexType, Constants.dynamicIndexType };
 
     public MarketWithIndices(String name, String country, String city, String address, float percentageOperationCost,
             Currency tradingCurrency, HashMap<String, Asset> availableAssets, World world) {

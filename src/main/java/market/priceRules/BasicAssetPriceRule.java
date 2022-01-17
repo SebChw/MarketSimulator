@@ -1,12 +1,14 @@
 package market.priceRules;
 
+import java.io.Serializable;
+
 import market.entityCreator.SemiRandomValuesGenerator;
 
 /**
  * Function that given some change in parameters with 50% chance changes the
  * ratio
  */
-public class BasicAssetPriceRule implements AssetPriceRule {
+public class BasicAssetPriceRule implements AssetPriceRule, Serializable {
 
     /**
      * @param DifferenceInAmountInCircularion amount in circulation before - now

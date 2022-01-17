@@ -9,6 +9,7 @@ import market.gui.MainPanelController;
 import market.interfaces.Dealer;
 import market.transactions.StrictTransactionSystem;
 import market.transactions.TransactionSystem;
+import market.world.Constants;
 import market.world.World;
 import market.assets.Asset;
 import market.assets.Currency;
@@ -29,7 +30,7 @@ public class InvestmentFund extends Trader implements Dealer {
     TransactionSystem transactionSystem = new StrictTransactionSystem();
 
     private String[] moreDetails = { "Menager first name: ", "Menager last name: ", "Registered currency: " };
-    private MainPanelController controller;
+    private transient MainPanelController controller;
 
     /**
      * 
@@ -43,7 +44,7 @@ public class InvestmentFund extends Trader implements Dealer {
     public InvestmentFund(String tradingIdentifier, HashMap<String, Float> investmentBudget, String name,
             String menagerFirstName, String menagerLastName, Currency registeredCurrency, boolean isBear, World world,
             MainPanelController controller, float fundPercentageProfit) {
-        super(tradingIdentifier, investmentBudget, name, "Investment Fund", isBear, world);
+        super(tradingIdentifier, investmentBudget, name, Constants.investmentFundType, isBear, world);
 
         this.menagerFirstName = menagerFirstName;
         this.menagerLastName = menagerLastName;
@@ -118,6 +119,10 @@ public class InvestmentFund extends Trader implements Dealer {
      */
     public MainPanelController getController() {
         return controller;
+    }
+
+    public void setController(MainPanelController controller) {
+        this.controller = controller;
     }
 
     @Override

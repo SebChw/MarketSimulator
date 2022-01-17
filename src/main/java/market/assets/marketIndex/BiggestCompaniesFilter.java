@@ -1,6 +1,8 @@
 package market.assets.marketIndex;
 
 import market.traders.Company;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,7 +10,7 @@ import java.util.Comparator;
 /**
  * Sorts companies based on their current price
  */
-public class BiggestCompaniesFilter implements CompaniesFilter {
+public class BiggestCompaniesFilter implements CompaniesFilter, Serializable {
 
     /**
      * User Must ensure that companiesByNow intersection updatedCompanies is Empty!

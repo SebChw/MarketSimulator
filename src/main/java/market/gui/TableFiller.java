@@ -103,7 +103,6 @@ public class TableFiller {
     private void popUp(Parent root) {
         Image icon = new Image(TableFiller.class.getResourceAsStream("coin.png")); // this url is taken from javaFX
                                                                                    // docs
-
         Stage stage = new Stage();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -120,7 +119,7 @@ public class TableFiller {
         else if (type.equals("trader"))
             filename = "traderDetailsScene.fxml";
         else
-            filename = "MarketDetailsScene.fxml";
+            filename = "marketDetailsScene.fxml";
 
         loader = new FXMLLoader(TableFiller.class.getResource(filename));
         loadController(loader, type, thing);

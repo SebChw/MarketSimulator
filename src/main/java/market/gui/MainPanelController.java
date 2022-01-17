@@ -1,5 +1,6 @@
 package market.gui;
 
+import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -98,8 +99,8 @@ public class MainPanelController implements Initializable {
         dateLabel.setText("Current Date: " + world.getCurrentTime().toString());
 
         world.getObjectCounter().fillGridPane(worldDetails);
-        world.getObjectsAdder().addNewCurrency();
-        world.getObjectsAdder().addNewCommodity();
+        // world.getObjectsAdder().addNewCurrency();
+        // world.getObjectsAdder().addNewCommodity();
         // world.getObjectsAdder().addNewInvestmentFund(this);
         // world.getObjectsAdder().addNewCompany();
         // Market market = world.getObjectsAdder().addNewRandomMarket();
@@ -131,6 +132,7 @@ public class MainPanelController implements Initializable {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 world.setBullProbability(newValue.floatValue());
             }
+
         });
 
     }
@@ -164,7 +166,7 @@ public class MainPanelController implements Initializable {
     }
 
     public void addMarket() {
-        marketsData.add(world.getObjectsAdder().addNewRandomMarket());
+        marketsData.add(world.getObjectsAdder().addNewRandomMarket(this));
         refreshTable(marketTable);
     }
 
@@ -175,7 +177,7 @@ public class MainPanelController implements Initializable {
     }
 
     public void addStaticIndex() {
-        assetsData.add(world.getObjectsAdder().addNewMarketIndex());
+        assetsData.add(world.getObjectsAdder().addNewMarketIndex(this));
         refreshTable(assetTable);
         world.checkNeedOfCreatingInvestor(this);
     }
@@ -187,13 +189,13 @@ public class MainPanelController implements Initializable {
     }
 
     public void addCommodity() {
-        assetsData.add(world.getObjectsAdder().addNewCommodity());
+        assetsData.add(world.getObjectsAdder().addNewCommodity(this));
         refreshTable(assetTable);
         world.checkNeedOfCreatingInvestor(this);
     }
 
     public void addCompany() {
-        Company company = world.getObjectsAdder().addNewCompany();
+        Company company = world.getObjectsAdder().addNewCompany(this);
         tradersData.add(company);
         assetsData.add(company.getShare());
         refreshTable(traderTable);
@@ -201,7 +203,7 @@ public class MainPanelController implements Initializable {
     }
 
     public void addHumanInvestor() {
-        tradersData.add(world.getObjectsAdder().addNewHumanInvestor());
+        tradersData.add(world.getObjectsAdder().addNewHumanInvestor(this));
         refreshTable(traderTable);
 
     }
@@ -247,6 +249,57 @@ public class MainPanelController implements Initializable {
         }
 
         traderSeen = !traderSeen;
+    }
+
+    public void restartSimulation() {
+        marketsData.clear();
+        assetsData.clear();
+        tradersData.clear();
+        world.restart();
+        world.getObjectCounter().fillGridPane(worldDetails);
+        // world.getObjectsAdder().addNewCurrency();
+    }
+
+    public void writeSave() throws IOException {
+        world.removeThreads();
+
+        String filename = "checkpoint.ser";
+
+        world.setAllProperties();
+
+        ObjectOutputStream out = new ObjectOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(filename)));
+
+        out.writeObject(world);
+        out.close();
+
+        world.addThreads();
+    }
+
+    public void readSave() throws ClassNotFoundException, IOException {
+        String filename = "checkpoint.ser";
+
+        restartSimulation();
+
+        ObjectInputStream in = new ObjectInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(filename)));
+
+        world = (World) in.readObject();
+        in.close();
+
+        this.marketsData.addAll(world.getWorldContainer().getAllMarkets());
+        this.assetsData.addAll(world.getWorldContainer().getAllAssets());
+        this.tradersData.addAll(world.getWorldContainer().getAllTraders());
+
+        world.readAllProperties(this);
+        world.addThreads();
+        world.getObjectCounter().fillGridPane(worldDetails);
+
+        bullProbabilitySlider.setValue(world.getBullProbability());
+        transactionProbabilitySlider.setValue(world.getTransactionProbability());
+
     }
 
 }

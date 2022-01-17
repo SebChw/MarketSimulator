@@ -1,13 +1,15 @@
 package market.transactions;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import market.assets.Asset;
 import market.interfaces.Dealer;
 import market.traders.Trader;
+import market.world.Constants;
 import market.world.World;
 
-public class StrictTransactionSystem implements TransactionSystem {
+public class StrictTransactionSystem implements TransactionSystem, Serializable {
 
     /**
      * Before every transaction we nned to check if trader is a human Investor and
@@ -19,7 +21,7 @@ public class StrictTransactionSystem implements TransactionSystem {
      */
     public boolean checkConstraints(Trader trader, Asset wantedAsset, HashMap<String, Asset> availableAssets) {
 
-        if (!trader.getType().equals("human Investor")) {
+        if (!trader.getType().equals(Constants.humanTraderType)) {
             System.out.println("Only Human Investors Can buy here!!");
             return false;
         }

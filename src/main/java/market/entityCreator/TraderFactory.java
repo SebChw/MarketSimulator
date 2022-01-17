@@ -3,6 +3,8 @@ package market.entityCreator;
 import market.traders.*;
 import market.world.World;
 import market.assets.Currency;
+
+import java.io.Serializable;
 import java.util.*;
 import market.gui.MainPanelController;
 import market.assets.marketIndex.*;
@@ -10,7 +12,7 @@ import market.assets.marketIndex.*;
 /**
  * Function which we can use to create new Traders
  */
-public class TraderFactory {
+public class TraderFactory implements Serializable {
     private SemiRandomValuesGenerator attributesGenerator;
 
     private World world;

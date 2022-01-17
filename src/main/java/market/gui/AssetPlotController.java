@@ -135,4 +135,9 @@ public class AssetPlotController implements Initializable {
         assetValueChart.getData().add(series);
     }
 
+    public void clearPlot() {
+        plottedSeries.clear();
+        replotAllAssets();
+    }
+
 }

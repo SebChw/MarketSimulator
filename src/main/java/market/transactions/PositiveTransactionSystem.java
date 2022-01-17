@@ -1,5 +1,6 @@
 package market.transactions;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -9,9 +10,9 @@ import market.interfaces.Dealer;
 import market.traders.Trader;
 import market.world.World;
 
-public class PositiveTransactionSystem implements TransactionSystem {
+public class PositiveTransactionSystem implements TransactionSystem, Serializable {
     /**
-     * This function at first check if Trader has enough of Trading currency to buy
+     * This function at first check if Trader has enough of Trading Tcurrency to buy
      * wanted Asset -> If not It exchanges traders assets for trading currency until
      * he has enough of tradingCurrency
      * If it is still not enough it sell to the trader that amount on what they have

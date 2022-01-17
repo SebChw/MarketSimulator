@@ -1,0 +1,26 @@
+-classpath
+'C:/Users/sebas/.m2/repository/org/openjfx/javafx-controls/17.0.1/javafx-controls-17.0.1.jar;C:/Users/sebas/.m2/repository/org/openjfx/javafx-controls/17.0.1/javafx-controls-17.0.1-win.jar;C:/Users/sebas/.m2/repository/org/openjfx/javafx-graphics/17.0.1/javafx-graphics-17.0.1.jar;C:/Users/sebas/.m2/repository/org/openjfx/javafx-graphics/17.0.1/javafx-graphics-17.0.1-win.jar;C:/Users/sebas/.m2/repository/org/openjfx/javafx-base/17.0.1/javafx-base-17.0.1.jar;C:/Users/sebas/.m2/repository/org/openjfx/javafx-base/17.0.1/javafx-base-17.0.1-win.jar;C:/Users/sebas/.m2/repository/org/openjfx/javafx-fxml/11/javafx-fxml-11.jar;C:/Users/sebas/.m2/repository/org/openjfx/javafx-fxml/11/javafx-fxml-11-win.jar'
+-encoding
+'UTF-8'
+-protected
+-source
+'1.8'
+-sourcepath
+'D:/AI_year2/ObjectOrientedProgramming/Java/market_simulator/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2022. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'D:/AI_year2/ObjectOrientedProgramming/Java/market_simulator/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'market_simulator 1.0.0 API'
+-linkoffline
+'https://docs.oracle.com/javase/8/docs/api' 'D:/AI_year2/ObjectOrientedProgramming/Java/market_simulator/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'market_simulator 1.0.0 API'
