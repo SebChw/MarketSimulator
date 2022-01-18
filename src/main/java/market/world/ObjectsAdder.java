@@ -90,7 +90,8 @@ public class ObjectsAdder implements Serializable {
         // As we add company we must update all dynamic indices
         for (DynamicMarketIndex index : worldContainer.getDynamicMarketIndices()) {
             index.update(company);
-            index.updateIndex();
+            // ! index.updateIndex(); Can't to this as this may lead to inconsistenct with
+            // number of rates!
         }
 
         TraderFactory.fillInitialBudgetRandomly(worldContainer.getCurrencies(), company);

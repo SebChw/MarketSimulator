@@ -101,21 +101,22 @@ public class World implements Serializable {
     }
 
     public void updateAllRates() {
+        for (Company company : worldContainer.getCompanies()) {
+            company.notifyObservers();
+        }
         for (Asset asset : worldContainer.getAllAssets()) {
             asset.updateRate();
             // asset.changeAmountOfOwners(1);
         }
     }
 
-    public void updateAllIndices() {
-        for (Company company : worldContainer.getCompanies()) {
-            company.notifyObservers();
-        }
-        for (DynamicMarketIndex index : worldContainer.getDynamicMarketIndices()) {
-            index.updateIndex();
-            // asset.changeAmountOfOwners(1);
-        }
-    }
+    // public void updateAllIndices() {
+
+    // for (DynamicMarketIndex index : worldContainer.getDynamicMarketIndices()) {
+    // index.updateIndex();
+    // // asset.changeAmountOfOwners(1);
+    // }
+    // }
 
     /**
      * @return String

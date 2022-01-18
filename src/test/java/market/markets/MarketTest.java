@@ -18,8 +18,8 @@ public class MarketTest {
         World world = new World("nice");
         Currency cur1 = new Currency("zloty", null, "pieczarki", (float) 2);
         Currency cur2 = new Currency("yang", null, "pieczarki", (float) 0.5);
-        Commodity com1 = new Commodity("zloto", null, cur2, (float) 5);
-        Commodity com2 = new Commodity("srebro", null, cur1, (float) 2);
+        Commodity com1 = new Commodity("zloto", null, cur2, (float) 1 / 5);
+        Commodity com2 = new Commodity("srebro", null, cur1, (float) 1 / 2);
         HashMap<String, Asset> availableCurrencies = new HashMap<String, Asset>();
         HashMap<String, Asset> availableCommodities = new HashMap<String, Asset>();
         availableCurrencies.put(cur1.getName(), cur1);

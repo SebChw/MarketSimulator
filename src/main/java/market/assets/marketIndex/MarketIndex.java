@@ -97,7 +97,7 @@ public class MarketIndex extends Asset {
     public float calculateRatio() {
         float ratio = 0;
         for (Company company : companies) {
-            ratio += 1 / company.getShareValue();
+            ratio += company.getShareValue(); // calculate
         }
         return 1 / ratio;
     }

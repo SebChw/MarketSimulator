@@ -1,8 +1,8 @@
 package market.exchangeRates;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
+import market.assets.Asset;
 import market.priceRules.*;
 
 import java.util.LinkedList;
@@ -15,15 +15,16 @@ public class ExchangeRatesProvider implements Serializable {
     private AssetPriceRule assetPriceRule = new BasicAssetPriceRule();
     private float accumulatedRateChange = 0;
     private int numberOfStoredRates = 0;
-    private float minPrice = -5;
-    private float maxPrice = 10000;
-    private LinkedList<Float> rates = new LinkedList<Float>(); // This provides exchange rates of one asset to all other
+    private float minPrice = 1000000;
+    private float maxPrice = -5;
+    private LinkedList<Float> rates = new LinkedList<Float>(); // This provides exchange rates of backing asset to the
+                                                               // particular one. So the smaller it is the more valuable
+                                                               // the asset
+    private Asset asset;
 
-    public ExchangeRatesProvider(String nameOfBackingAsset, float startingPrice) {
+    public ExchangeRatesProvider(String nameOfBackingAsset, float startingPrice, Asset asset) {
         this.nameOfBackingAsset = nameOfBackingAsset; // Main asset that Backs everything in our system
-
-        if (startingPrice != 0)
-            this.updateRate(startingPrice);
+        this.asset = asset;
     }
 
     /**
@@ -31,11 +32,12 @@ public class ExchangeRatesProvider implements Serializable {
      */
     public void updateRate(Float rate) {
         this.rates.addFirst(rate); // Consider here inserting new rate at the begining so taking it will be O(1).
-        if (minPrice < rate) {
-            minPrice = rate;
+        float currentRatioToMainAsset = asset.calculateThisToMain(1);
+        if (minPrice > currentRatioToMainAsset) {
+            minPrice = currentRatioToMainAsset;
         }
-        if (maxPrice > rate) {
-            maxPrice = rate;
+        if (maxPrice < currentRatioToMainAsset) {
+            maxPrice = currentRatioToMainAsset;
         }
         numberOfStoredRates += 1;
     }
@@ -45,13 +47,15 @@ public class ExchangeRatesProvider implements Serializable {
         float currentRate = getRate();
         float updated = 0;
         if (currentRate < 1 && accumulatedRateChange != 0) {
-            updated = 1 / (1 / currentRate - 1 / accumulatedRateChange);
+            updated = 1 / (1 / currentRate + accumulatedRateChange);
         } else {
-            updated = currentRate + accumulatedRateChange;
+            updated = currentRate - accumulatedRateChange;
         }
 
         if (updated > 0) {
             updateRate(updated);
+        } else {
+            updateRate(currentRate);
         }
         accumulatedRateChange = 0;
     }
@@ -61,6 +65,10 @@ public class ExchangeRatesProvider implements Serializable {
      */
     public float getRate() {
         return this.rates.getFirst(); // !Consider using GetFirst here and appending new raters at the beginning!
+    }
+
+    public float getRate(int which) {
+        return this.rates.get(which); // !Consider using GetFirst here and appending new raters at the beginning!
     }
 
     public void removeLastRate() {
@@ -92,19 +100,20 @@ public class ExchangeRatesProvider implements Serializable {
      * @param longestPlot
      */
     public void fillAssetSeries(XYChart.Series<Number, Number> series, String scale, int longestPlot) {
-        ArrayList<Float> rates = new ArrayList<Float>(this.rates);
+
         int difference = longestPlot - numberOfStoredRates;
         if (scale.equals("normal")) {
             for (int i = 0; i < numberOfStoredRates; i++) {
                 series.getData().add(
-                        new XYChart.Data<Number, Number>(numberOfStoredRates - i - 1 + difference, 1 / rates.get(i)));
+                        new XYChart.Data<Number, Number>(numberOfStoredRates - i - 1 + difference,
+                                asset.calculateThisToMain(1, i)));
             }
         } else {
-            float startingPoint = 1 / rates.get(numberOfStoredRates - 1);
+            float startingPoint = asset.calculateThisToMain(1, numberOfStoredRates - 1);
             for (int i = 0; i < numberOfStoredRates; i++) {
                 series.getData().add(
                         new XYChart.Data<Number, Number>(numberOfStoredRates - i - 1 + difference,
-                                1 / rates.get(i) / startingPoint));
+                                asset.calculateThisToMain(1, i) / startingPoint));
             }
         }
 
@@ -121,21 +130,14 @@ public class ExchangeRatesProvider implements Serializable {
      * @return float
      */
     public float getMinPrice() {
-        return 1 / minPrice;
+        return minPrice;
     }
 
     /**
      * @return float
      */
     public float getMaxPrice() {
-        return 1 / maxPrice;
-    }
-
-    /**
-     * @return float
-     */
-    public float getCurrentPrice() {
-        return 1 / getRate();
+        return maxPrice;
     }
 
     /**
@@ -143,6 +145,10 @@ public class ExchangeRatesProvider implements Serializable {
      */
     public String getNameOfBackingAsset() {
         return nameOfBackingAsset;
+    }
+
+    public void setAssetPriceRule(AssetPriceRule assetPriceRule) {
+        this.assetPriceRule = assetPriceRule;
     }
 
 }

@@ -117,12 +117,12 @@ public class Share extends AssetBackedByCurrency {
     public synchronized void changeAmountInCirculation(float amount) {
         // BE VERY CAREFULL HERE!
         super.changeAmountInCirculation(amount);
+        company.updateTradingVolume(amount);
+        company.updateTotalSales(amount);
         if (amount < 0) {
             // I NEED TO SUBTRACT AS WHEN IM SELLING THEN amount is negative!
             // ! This was the biggest bug I've made and it was hard to find itp
-            this.availableShares -= amount; // ! DONT NEED TO DO THIS IM DOING IT DURING
-            // UNFREEZING ILL SHOULD DO THIS
-            // ONLY WHEN IM SELLING. and sellin is represented by negative amount
+            this.availableShares -= amount; // ! DONT NEED TO DO THIS IM DOING IT DURINGt
         }
 
         // ! Throw exception here!

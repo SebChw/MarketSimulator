@@ -3,6 +3,7 @@ package market.assets;
 import java.util.HashSet;
 
 import market.world.Constants;
+import market.priceRules.NoAmountInCirculationPriceRule;
 
 /** Class representing Currency in our world. */
 public class Currency extends Asset {
@@ -11,6 +12,11 @@ public class Currency extends Asset {
     public Currency(String name, HashSet<String> countriesWhereLegal, String backingAsset, float startingRate) {
         super(name, Constants.currencyType, 0, backingAsset, startingRate);
         this.countriesWhereLegal = countriesWhereLegal;
+
+        if (startingRate != 0)
+            getMainBankRates().updateRate(startingRate);
+
+        getMainBankRates().setAssetPriceRule(new NoAmountInCirculationPriceRule());
     }
 
     /**

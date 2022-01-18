@@ -1,6 +1,7 @@
 package market.assets.marketIndex;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import market.interfaces.CompanyObserver;
 import market.traders.Company;
@@ -46,10 +47,11 @@ public class DynamicMarketIndex extends MarketIndex implements CompanyObserver {
         companiesToUpdate.add(company);
     }
 
-    public void updateIndex() {
-        companiesFilter.filterCompanies(this.getCompanies(), this.companiesToUpdate, maxNumOfCompanies);
-        companiesToUpdate.clear();
-
-        updateRate();
+    public void updateRate() {
+        if (!Objects.isNull(companiesFilter)) {
+            companiesFilter.filterCompanies(this.getCompanies(), this.companiesToUpdate, maxNumOfCompanies);
+            companiesToUpdate.clear();
+        }
+        super.updateRate();
     }
 }

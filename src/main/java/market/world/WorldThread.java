@@ -51,7 +51,7 @@ public class WorldThread extends Thread {
 
             // UI update is run on the Application thread
             world.updateAllRates();
-            world.updateAllIndices();
+            // world.updateAllIndices();
             Platform.runLater(updater);
         }
     }

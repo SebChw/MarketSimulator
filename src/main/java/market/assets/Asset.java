@@ -27,7 +27,7 @@ public abstract class Asset implements Searchable, Serializable {
         this.name = name;
         this.type = type;
         this.amountInCirculation = new SimpleFloatProperty(amountInCirculation);
-        this.mainBankRates = new ExchangeRatesProvider(backingAsset, startingRate);
+        this.mainBankRates = new ExchangeRatesProvider(backingAsset, startingRate, this);
     }
 
     /**
@@ -88,7 +88,7 @@ public abstract class Asset implements Searchable, Serializable {
      */
     public synchronized void changeHypeLevel(float amount) {
         float newValue = this.hypeLevel.get() + amount;
-        this.mainBankRates.updateWRT(newValue - this.hypeLevel.get(), "hypeLevel");
+        this.mainBankRates.updateWRT(newValue - this.hypeLevel.get(), "hype");
         this.hypeLevel.set(newValue);
 
     }
@@ -119,7 +119,11 @@ public abstract class Asset implements Searchable, Serializable {
      * @return float
      */
     public float calculateThisToMain(float amount) {
-        return 1 / this.mainBankRates.getRate() * amount;
+        return (1 / this.mainBankRates.getRate()) * amount;
+    }
+
+    public float calculateThisToMain(float amount, int when) {
+        return (1 / this.mainBankRates.getRate(when)) * amount;
     }
 
     /**
@@ -143,7 +147,7 @@ public abstract class Asset implements Searchable, Serializable {
      * @return float
      */
     public float getCurrentRate() {
-        return this.mainBankRates.getRate();
+        return calculateThisToMain(1);
     }
 
     public void updateRate() {

@@ -36,6 +36,14 @@ public class InvestmentFundUnit extends AssetBackedByCurrency {
     }
 
     /**
+     * @param amount
+     * @return float
+     */
+    public float getPossibleAmount() {
+        return SemiRandomValuesGenerator.getRandomIntNumber(5);
+    }
+
+    /**
      * @return String
      */
     @Override
@@ -55,7 +63,8 @@ public class InvestmentFundUnit extends AssetBackedByCurrency {
         Map.Entry<String, Float> asset = null;
         while (it.hasNext()) {
             asset = it.next();
-            ratio += (1 / world.getParticularAsset(asset.getKey()).getCurrentRate()) * asset.getValue();
+            ratio += world.getParticularAsset(asset.getKey()).calculateThisToDifferent(issuedBy.getRegisteredCurrency(),
+                    asset.getValue());
         }
         return 1 / ratio;
     }

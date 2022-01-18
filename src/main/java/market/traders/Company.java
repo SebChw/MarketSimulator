@@ -71,11 +71,23 @@ public class Company extends Trader implements CompanySubject {
         return this.share.getCurrentRate();
     }
 
+    public void updateTradingVolume(float amount) {
+        if (amount != 0)
+            tradingVolume += 1;
+    }
+
+    public void updateTotalSales(float amount) {
+        if (amount != 0) {
+            totalSales += share.calculateThisToMain(amount);
+        }
+
+    }
+
     /**
      * @return float
      */
     public float getCurrentPrice() {
-        return 1 / this.share.getCurrentRate();
+        return this.share.getCurrentRate();
     }
 
     public float getMaximumPrice() {
@@ -188,7 +200,10 @@ public class Company extends Trader implements CompanySubject {
         super.operation();
         generateRevenue();
         generateProfit();
-        issueShares();
+        if (SemiRandomValuesGenerator.getRandomFloatNumber(1) > 0.2) {
+            issueShares();
+        }
+
     }
 
 }

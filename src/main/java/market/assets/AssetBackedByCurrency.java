@@ -13,6 +13,9 @@ public abstract class AssetBackedByCurrency extends Asset {
         super(name, type, amountInCirculation, tradingCurrency.getName(), startingRate);
         this.tradingCurrency = tradingCurrency;
 
+        if (startingRate != 0)
+            getMainBankRates().updateRate(startingRate);
+
     }
 
     /**
@@ -30,8 +33,19 @@ public abstract class AssetBackedByCurrency extends Asset {
     @Override
     public float calculateThisToMain(float amount) {
         // Here we must do This asset -> this Asset's Currency -> Main Backing Currency
-        float thisAssetToThisCurrency = amount * this.getMainBankRates().getRate();
+        float thisAssetToThisCurrency = amount * 1 / this.getMainBankRates().getRate();
         return this.tradingCurrency.calculateThisToMain(thisAssetToThisCurrency);
+    }
+
+    /**
+     * @param amount
+     * @return float
+     */
+    @Override
+    public float calculateThisToMain(float amount, int when) {
+        // Here we must do This asset -> this Asset's Currency -> Main Backing Currency
+        float thisAssetToThisCurrency = amount * 1 / this.getMainBankRates().getRate(when);
+        return this.tradingCurrency.calculateThisToMain(thisAssetToThisCurrency, when);
     }
 
     /**
@@ -42,6 +56,6 @@ public abstract class AssetBackedByCurrency extends Asset {
     public float calculateMainToThis(float amount) {
         // Here we must do Main -> this Asset's Currency -> This asset
         float mainToThisCurrency = this.tradingCurrency.calculateMainToThis(amount);
-        return mainToThisCurrency * 1 / this.getMainBankRates().getRate();
+        return mainToThisCurrency * this.getMainBankRates().getRate();
     }
 }
