@@ -67,7 +67,7 @@ public class Trader implements Runnable, Searchable, Serializable {
      */
     @Override
     public String toString() {
-        return this.tradingIdentifier + " " + this.type + " " + this.name;
+        return "Click me to see details!";
     }
 
     /**
@@ -200,7 +200,7 @@ public class Trader implements Runnable, Searchable, Serializable {
         // !I'm updating all assset information here
         asset.changeAmountInCirculation(amount);
         if (SemiRandomValuesGenerator.getRandomFloatNumber(1) > 0.5) {
-            asset.changeHypeLevel(SemiRandomValuesGenerator.getFromNormal(amount / 10, 5));
+            asset.changeHypeLevel(SemiRandomValuesGenerator.getFromNormal(0, 5));
         }
         asset.changeAmountOfOwners(notPosses(asset));
 
@@ -238,7 +238,7 @@ public class Trader implements Runnable, Searchable, Serializable {
         // Updates asset parameters influencing it's price
         asset.changeAmountInCirculation(-amount);
         if (SemiRandomValuesGenerator.getRandomFloatNumber(1) > 0.5) {
-            asset.changeHypeLevel(SemiRandomValuesGenerator.getFromNormal(-amount / 10, 5));
+            asset.changeHypeLevel(SemiRandomValuesGenerator.getFromNormal(0, 5));
         }
         asset.changeAmountOfOwners(posses(asset) - 1);
 

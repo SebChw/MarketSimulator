@@ -33,3 +33,4 @@ UML
 .editorconfig
 .travis.yml
 *.xcf
+readme.html

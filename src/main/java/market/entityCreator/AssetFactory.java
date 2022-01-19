@@ -105,7 +105,7 @@ public class AssetFactory implements Serializable {
         }
 
         DynamicMarketIndex index = new DynamicMarketIndex(name, new ArrayList<Company>(companiesByNow), this.mainAsset,
-                filter, numberOfCompanies);
+                filter, numberOfCompanies, this.world);
 
         for (Company company : companiesByNow) {
             company.registerObserver(index);
@@ -127,7 +127,7 @@ public class AssetFactory implements Serializable {
                     || asset.getType().equals(Constants.dynamicIndexType))
                 continue;
 
-            if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.1) {
+            if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.2) {
                 float amountBought = SemiRandomValuesGenerator.getRandomFloatNumber(100, 0.1f);
                 boughtAssets.put(asset.getName(), amountBought);
             }

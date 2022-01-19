@@ -16,7 +16,10 @@ public class BasicAssetPriceRule implements AssetPriceRule, Serializable {
      */
     @Override
     public float updateWRTAmountInCirculation(float DifferenceInAmountInCircularion) {
+        if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.05)
+            return SemiRandomValuesGenerator.getFromNormal(0, 0.2f);
         return DifferenceInAmountInCircularion / 10000;
+
     }
 
     /**
@@ -25,7 +28,7 @@ public class BasicAssetPriceRule implements AssetPriceRule, Serializable {
      */
     @Override
     public float updateWRTHype(float DifferenceInHype) {
-        if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.8) {
+        if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.5) {
             return DifferenceInHype / 1000;
         } else
             return 0;

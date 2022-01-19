@@ -34,7 +34,7 @@ public class TraderFactory implements Serializable {
         HashMap<String, Float> investmentBudget = new HashMap<String, Float>();
         String name = company.get("name");
         String ipoDate = company.get("ipoDate");
-        Float ipoShareValue = SemiRandomValuesGenerator.getRandomFloatNumber(100, 1f) + 100;
+        Float ipoShareValue = SemiRandomValuesGenerator.getFromNormal(200, 30) + 20;
         float openingPrice = SemiRandomValuesGenerator.getRandomFloatNumber(10000, 0.1f) + 100;
         float profit = SemiRandomValuesGenerator.getRandomFloatNumber(10000, 0.1f) + 100;
         float revenue = SemiRandomValuesGenerator.getRandomFloatNumber(5000, 0.1f) + 100;

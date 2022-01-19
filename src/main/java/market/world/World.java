@@ -3,7 +3,6 @@ package market.world;
 import market.traders.*;
 import market.AppInitializer;
 import market.assets.*;
-import market.assets.marketIndex.*;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -44,7 +43,7 @@ public class World implements Serializable {
         // numberOfCompanies == numberOfShares
         float numberOfAssets = objectCounter.getAmountOfAssets();
         float numberOfInvestors = objectCounter.getAmountOfInvestors();
-        if (numberOfInvestors / numberOfAssets < 0.5) {
+        if (numberOfInvestors / numberOfAssets < 0.6) {
             float randomNumber = SemiRandomValuesGenerator.getRandomFloatNumber(1);
             if (randomNumber < 0.5) {
                 controller.addHumanInvestor();
@@ -100,23 +99,17 @@ public class World implements Serializable {
         bullProbability = probability;
     }
 
+    /**
+     * Function that iterates over all assets in the world and update their rates
+     */
     public void updateAllRates() {
         for (Company company : worldContainer.getCompanies()) {
             company.notifyObservers();
         }
         for (Asset asset : worldContainer.getAllAssets()) {
             asset.updateRate();
-            // asset.changeAmountOfOwners(1);
         }
     }
-
-    // public void updateAllIndices() {
-
-    // for (DynamicMarketIndex index : worldContainer.getDynamicMarketIndices()) {
-    // index.updateIndex();
-    // // asset.changeAmountOfOwners(1);
-    // }
-    // }
 
     /**
      * @return String

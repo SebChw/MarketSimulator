@@ -57,7 +57,8 @@ public class StrictTransactionSystem implements TransactionSystem, Serializable 
             trader.addBudget(wantedAsset, amount);
             trader.subtractBudget(dealer.getTradingCurrency(), cost);
         } else {
-            System.out.println("Not enough money to buy on investment fund! Or you just don't have our currency!");
+            // System.out.println("Not enough money to buy on investment fund! Or you just
+            // don't have our currency!");
         }
 
     }

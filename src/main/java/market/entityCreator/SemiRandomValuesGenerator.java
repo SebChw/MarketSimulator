@@ -19,17 +19,22 @@ import market.world.World;
  * All functions get**Data returns a HashMap with keys as attributes names
  */
 public class SemiRandomValuesGenerator implements Serializable {
-    private String[] commodityNames = { "Cereal", "Silver", "Gas", "Oil", "Copper" };
-    private String[] currencyNames = { "zloty", "euro", "dolar", "pound", "yang" };
+    private String[] commodityNames = { "Cereal", "Silver", "Gas", "Oil", "Copper", "Les Paul", "Stratocaster", "SG",
+            "Telecaster" };
+    private String[] currencyNames = { "zloty", "euro", "dolar", "pound", "yang", "guitar pick", "czech koruna" };
     private String[] countriesNames = { "Poland", "US", "Great Britain", "China", "Australia", "Italy", "Spain",
             "Portugal" };
     private String[] tradingUnits = { "ounce", "gram", "liter", "barell", "tons" };
-    private String[] companiesNames = { "EvilCorp", "Facebook", "Google", "Spotify", "Microsoft" };
-    private String[] humanInvestorsSecondNames = { "Vivaldi", "Tchaikovsky", "Chopin", "Bach", "Mozart" };
-    private String[] humanInvestorsNames = { "Antonio", "Jan", "Sebastian", "Amadeus", "Fyderyk" };
+    private String[] companiesNames = { "EvilCorp", "Facebook", "Google", "Spotify", "Microsoft", "Gibson", "Fender",
+            "Herley Benton", "PRS", "Gretsch", "Ibanez" };
+    private String[] humanInvestorsSecondNames = { "Vivaldi", "Tchaikovsky", "Chopin", "Bach", "Mozart", "Satriani",
+            "Vai", "Johnson", "Clapton", "Mayer", "King", "Charles", "Bonamassa", "Timmons" };
+    private String[] humanInvestorsNames = { "Antonio", "Jan", "Sebastian", "Amadeus", "Fyderyk", "Andy", "Joe",
+            "Steve", "Eric", "John", "BB.", "Ray", "Andy" };
     private String[] investmendFundsNames = { "Vanguard", "Fidelity", "iShares", "Invesco", "Goldman" };
-    private String[] marketNames = { "Cartmax", "MegaPlex", "DollarSmart", "Marketaro", "Marketvio" };
-    private String[] citiesNames = { "Singapur", "Krzywanice", "Posen", "New York", "Old York" };
+    private String[] marketNames = { "Cartmax", "MegaPlex", "DollarSmart", "Marketaro", "Marketvio", "Guitar Center",
+            "Thomman" };
+    private String[] citiesNames = { "Singapur", "Krzywanice", "Posen", "New York", "Old York", "London" };
     private String[] streetsNames = { "Bourbon Street ", "Abbey Road ", "Lombard Street ", "Haji Lane ",
             "Passeig de Sant Joan " };
     private String[] marketIndicesNames = { "S&P", "Nasdaq Composite", "Dow Jones", "Average", "MSCI World", "FTSE" };
@@ -263,6 +268,10 @@ public class SemiRandomValuesGenerator implements Serializable {
             id = RandomString.getAlphaNumericString(10);
         }
         return id;
+    }
+
+    public static String getRandomIdentifier(int length) {
+        return RandomString.getAlphaNumericString(length);
     }
 
     /**

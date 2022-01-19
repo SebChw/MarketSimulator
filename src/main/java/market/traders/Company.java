@@ -182,7 +182,7 @@ public class Company extends Trader implements CompanySubject {
     @Override
     public void fillGridPane(GridPane traderDetails) {
         super.fillGridPane(traderDetails);
-        Float ipoValue = 1 / share.getCurrentRate();
+        Float ipoValue = share.getCurrentRate();
         String[] filledDetails = { ipoDate.toString(), ipoValue.toString(), openingPrice.toString(),
                 String.valueOf(getCurrentPrice()), String.valueOf(getMaximumPrice()),
                 profit.toString(), revenue.toString(), tradingVolume.toString(), totalSales.toString(),

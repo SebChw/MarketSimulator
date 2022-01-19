@@ -1,11 +1,13 @@
 package market.assets.marketIndex;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 
 import market.interfaces.CompanyObserver;
 import market.traders.Company;
 import market.world.Constants;
+import market.world.World;
 
 /**
  * Extension of simple market index. This is dynamic. It means if some company
@@ -14,13 +16,17 @@ import market.world.Constants;
 public class DynamicMarketIndex extends MarketIndex implements CompanyObserver {
     private CompaniesFilter companiesFilter;
     private int maxNumOfCompanies;
-    private volatile ArrayList<Company> companiesToUpdate = new ArrayList<Company>();
+    private volatile HashSet<String> companiesToFilter = new HashSet<String>();
+    private World world;
 
     public DynamicMarketIndex(String name, ArrayList<Company> companies, String backingAsset,
-            CompaniesFilter companiesFilter, int maxNumOfCompanies) {
+            CompaniesFilter companiesFilter, int maxNumOfCompanies, World world) {
         super(name, Constants.dynamicIndexType, companies, backingAsset);
         this.companiesFilter = companiesFilter;
         this.maxNumOfCompanies = maxNumOfCompanies;
+        this.world = world;
+
+        updateRate();
     }
 
     /**
@@ -44,13 +50,15 @@ public class DynamicMarketIndex extends MarketIndex implements CompanyObserver {
                 return;
             }
         }
-        companiesToUpdate.add(company);
+        companiesToFilter.add(company.getName());
     }
 
     public void updateRate() {
         if (!Objects.isNull(companiesFilter)) {
-            companiesFilter.filterCompanies(this.getCompanies(), this.companiesToUpdate, maxNumOfCompanies);
-            companiesToUpdate.clear();
+            this.setCompanies(
+                    companiesFilter.filterCompanies(new ArrayList<Company>(world.getWorldContainer().getCompanies()),
+                            maxNumOfCompanies));
+            // companiesToUpdate.clear();
         }
         super.updateRate();
     }

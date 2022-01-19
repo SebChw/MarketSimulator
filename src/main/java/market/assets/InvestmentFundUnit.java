@@ -63,9 +63,11 @@ public class InvestmentFundUnit extends AssetBackedByCurrency {
         Map.Entry<String, Float> asset = null;
         while (it.hasNext()) {
             asset = it.next();
+            // Here we sum up the price in the currency in which Investment fund works
             ratio += world.getParticularAsset(asset.getKey()).calculateThisToDifferent(issuedBy.getRegisteredCurrency(),
                     asset.getValue());
         }
+        // Then since ratio must be backing Asset -> particular one we must reverse it
         return 1 / ratio;
     }
 

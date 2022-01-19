@@ -32,7 +32,6 @@ public class MarketIndex extends Asset {
 
         this.companies = companies;
 
-        updateRate();
     }
 
     /**
@@ -97,7 +96,7 @@ public class MarketIndex extends Asset {
     public float calculateRatio() {
         float ratio = 0;
         for (Company company : companies) {
-            ratio += company.getShareValue(); // calculate
+            ratio += company.getShareValue(); // sum up all shares values
         }
         return 1 / ratio;
     }

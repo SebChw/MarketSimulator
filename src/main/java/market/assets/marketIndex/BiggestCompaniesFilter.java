@@ -21,12 +21,12 @@ public class BiggestCompaniesFilter implements CompaniesFilter, Serializable {
      *                          left
      */
     @Override
-    public void filterCompanies(ArrayList<Company> companiesByNow, ArrayList<Company> updatedCompanies,
-            int maxNumOfCompanies) {
-        // We refilter here
-        companiesByNow.addAll(updatedCompanies); // !I must ensure that there are no dupliccated in updatedCompanies
+    public ArrayList<Company> filterCompanies(ArrayList<Company> companies, int maxNumOfCompanies) {
 
-        Collections.sort(companiesByNow, new Comparator<Company>() {
+        // for (Company company : companies) {
+        // System.out.println(company.getName() + " " + company.getCurrentPrice());
+        // }
+        Collections.sort(companies, new Comparator<Company>() {
             public int compare(Company c1, Company c2) {
                 Float a = -c1.getCurrentPrice();
                 Float b = -c2.getCurrentPrice();
@@ -34,11 +34,12 @@ public class BiggestCompaniesFilter implements CompaniesFilter, Serializable {
             }
         });
 
-        int companiesNumber = companiesByNow.size();
+        int companiesNumber = companies.size();
         if (companiesNumber > maxNumOfCompanies) {
-            companiesByNow.subList(maxNumOfCompanies - 1, companiesNumber - 1).clear();
+            companies.subList(maxNumOfCompanies, companiesNumber).clear();
         }
 
+        return companies;
     }
 
     @Override

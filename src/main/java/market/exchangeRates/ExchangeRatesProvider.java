@@ -9,6 +9,11 @@ import java.util.LinkedList;
 
 import javafx.scene.chart.XYChart;
 
+/**
+ * Class containing all information about the rates of particular asset <b>The
+ * ratio here is how many of considered asset we can have for one unit of
+ * backing asset</b>
+ */
 public class ExchangeRatesProvider implements Serializable {
 
     private String nameOfBackingAsset;
@@ -28,6 +33,8 @@ public class ExchangeRatesProvider implements Serializable {
     }
 
     /**
+     * Function updating rate and min/max Prices
+     * 
      * @param rate
      */
     public void updateRate(Float rate) {
@@ -42,16 +49,25 @@ public class ExchangeRatesProvider implements Serializable {
         numberOfStoredRates += 1;
     }
 
+    /**
+     * Function updating rate taking into account accumulated Rate Change
+     */
     public void updateRate() {
-        // ! DEFINE RULES OF UPDATING MARKET INDICES and INVESTMENT FUNDS UNITS!
+
         float currentRate = getRate();
         float updated = 0;
+        // If rate is below zero and above we treat it a little bit differently
         if (currentRate < 1 && accumulatedRateChange != 0) {
-            updated = 1 / (1 / currentRate + accumulatedRateChange);
+            updated = currentRate + accumulatedRateChange;
         } else {
             updated = currentRate - accumulatedRateChange;
         }
 
+        // There is possibility that accumulated Rate Change will be so big that current
+        // rate will be negative
+        // We then neglect such change (not the best option I know)
+        // if (asset.getType().equals("Share"))
+        // System.out.println(updated);
         if (updated > 0) {
             updateRate(updated);
         } else {
@@ -61,24 +77,38 @@ public class ExchangeRatesProvider implements Serializable {
     }
 
     /**
+     * Returns current rate
+     * 
      * @return float
      */
     public float getRate() {
-        return this.rates.getFirst(); // !Consider using GetFirst here and appending new raters at the beginning!
+        return this.rates.getFirst();
     }
 
+    /**
+     * Allows to get rate in the particular moment in time
+     * 
+     * @param which
+     * @return
+     */
     public float getRate(int which) {
-        return this.rates.get(which); // !Consider using GetFirst here and appending new raters at the beginning!
+        return this.rates.get(which);
     }
 
+    /**
+     * Remove last rate. May be usefull if we want to somehow restrict size of
+     * rates.
+     */
     public void removeLastRate() {
         this.rates.removeLast();
         numberOfStoredRates -= 1;
     }
 
     /**
-     * @param change
-     * @param wrt
+     * This function accumulates Rate change
+     * 
+     * @param change difference in some parameter before and after transaction
+     * @param wrt    can be amount, hype, owners
      */
     public void updateWRT(float change, String wrt) {
         // acumulate
@@ -95,9 +125,13 @@ public class ExchangeRatesProvider implements Serializable {
     }
 
     /**
-     * @param series
-     * @param scale
-     * @param longestPlot
+     * This function calculate ratio of this particular asset to the Main asset from
+     * the beginning as asset was created
+     * and add them to the series.
+     * 
+     * @param series      series to which add the values
+     * @param scale       normal or percentage
+     * @param longestPlot used to set the offset
      */
     public void fillAssetSeries(XYChart.Series<Number, Number> series, String scale, int longestPlot) {
 

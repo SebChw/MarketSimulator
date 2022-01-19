@@ -2,6 +2,7 @@ package market.gui;
 
 import java.io.*;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import javafx.beans.binding.Bindings;
@@ -81,13 +82,15 @@ public class MainPanelController implements Initializable {
 
     private TableFilter tableFilter = new TableFilter();
 
+    private HashMap<String, AssetPlotController> plots = new HashMap<String, AssetPlotController>();
+
     /**
      * 
      * @param world Main world object in the simulation
      */
     public MainPanelController(World world) {
         this.world = world;
-        this.tableFiller = new TableFiller(world);
+        this.tableFiller = new TableFiller(world, this);
     }
 
     /**
@@ -143,6 +146,10 @@ public class MainPanelController implements Initializable {
     public void updateDate() {
         world.addOneDay();
         dateLabel.setText("Current Date: " + world.getCurrentTime().toString());
+        for (AssetPlotController plot : plots.values()) {
+            System.out.println(plot.toString());
+            plot.replotAllAssets();
+        }
     }
 
     private void setVisible(int index, TextField text, TableView<?> table, Label label) {
@@ -300,6 +307,10 @@ public class MainPanelController implements Initializable {
         bullProbabilitySlider.setValue(world.getBullProbability());
         transactionProbabilitySlider.setValue(world.getTransactionProbability());
 
+    }
+
+    public HashMap<String, AssetPlotController> getPlots() {
+        return plots;
     }
 
 }

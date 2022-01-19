@@ -35,7 +35,7 @@
         
     </head>
     <body class="vscode-body vscode-light">
-        <div align="center"><h1>MARKET SIMULATOR VER 1.0.0</h1></div>
+        <div align="center"><h1>MARKET SIMULATOR VER 1.0.0</h1><h3>Sebastian Chwilczyński 148248<h3></div>
 <p>If you have done any changes and you want to generate new documentation run:<br>
 <code>mvn javadoc:javadoc</code> <br>
 If you want to create new executable jar file run (Unfortunately JaCoCo is complaining, and I didn't have time to fix it. Will be fixed with new release): <br>
@@ -53,17 +53,22 @@ Finally if you want to run executable (<strong>You must have <a href="https://gl
 </ul>
 </li>
 </ol>
+<hr>
 <div align="center">
 <h2>Quick image instruction: </h2>
 <img src="file:///d:\AI_year2\ObjectOrientedProgramming\Java\market_simulator\images\MainPanelInstruction.png"/>
 <img src="file:///d:\AI_year2\ObjectOrientedProgramming\Java\market_simulator\images\AssetPlotInstruction.png"/>
 <img src="file:///d:\AI_year2\ObjectOrientedProgramming\Java\market_simulator\images\MarketDetails.png"/>
 <img src="file:///d:\AI_year2\ObjectOrientedProgramming\Java\market_simulator\images\TraderDetails.png"/>
-<!-- ![Main Panel Instruction](images/MainPanelInstruction.png "Main panel instructions")
-![Asset plot Instruction](images/AssetPlotInstruction.png "Asset plot instruction")
-![Market details instruction](images/MarketDetails.png "Market details instruction")
-![Trader details instructions](images/TraderDetails.png "Trader details instructions") -->
 </div>
+<hr>
+<h3> Important aspects: </h3>
+<ol>
+<li>Even though internally we exchange a lot between difference currencies (some assets are available to buy only with specific currency -&gt; then we offer some exchanges), values on plots and in tooltips are in <strong>Main asset</strong> which basically is a <strong>virtual</strong> backup for each currency. It is done to make interpretations easier.</li>
+<li>You can't specify where and under what name simulation is saved. There is some default save name, which is always overwritten. To make a read you first need to make a save!</li>
+<li>You have to run <code>threadTest</code> as a normal Java program. Somehow threads were not working in JUnit.</li>
+<li>Updates of all rates happens once a <code>virtual</code> day. Information about change is accumulated during the day and when next day is starting program updates all rates and dynamic indices.</li>
+</ol>
 
     </body>
     </html>

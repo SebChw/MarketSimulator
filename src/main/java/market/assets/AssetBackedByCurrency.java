@@ -3,7 +3,8 @@ package market.assets;
 /**
  * In general if something is Backed by some particular currency. We can buy it
  * only for that currency.
- * So Calculating ratio works a little bit differently
+ * So Calculating ratio works a little bit differently. Since we at first need
+ * to exchange to backing currency and then to main asset
  */
 public abstract class AssetBackedByCurrency extends Asset {
     private Currency tradingCurrency;

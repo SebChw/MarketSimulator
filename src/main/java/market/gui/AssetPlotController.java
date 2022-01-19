@@ -37,16 +37,22 @@ public class AssetPlotController implements Initializable {
 
     private ObservableList<String> assetsNames = FXCollections.observableArrayList();
 
+    private String id;
+    private MainPanelController rootController;
+
     /**
      * Just sets first asset to be plotted
      * 
      * @param asset asset to be plotted
      * @param world needed to be able to choose more assets
      */
-    public AssetPlotController(Asset asset, World world) {
+    public AssetPlotController(Asset asset, World world, String id, MainPanelController rootController) {
         this.firstAsset = asset;
         this.world = world;
+        this.id = id;
+        this.rootController = rootController;
 
+        rootController.getPlots().put(id, this);
     }
 
     /**
@@ -57,6 +63,7 @@ public class AssetPlotController implements Initializable {
      */
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+
         assetValueChart.setAnimated(false); // ! For removing Plots to work!!!
         // POPULATING LIST VIEW!
         this.assetsNames.addAll(world.getWorldContainer().getAllAssetsNames());
@@ -138,6 +145,11 @@ public class AssetPlotController implements Initializable {
     public void clearPlot() {
         plottedSeries.clear();
         replotAllAssets();
+    }
+
+    public void stop() {
+        System.out.println("Removing myself from plots!");
+        rootController.getPlots().remove(id);
     }
 
 }

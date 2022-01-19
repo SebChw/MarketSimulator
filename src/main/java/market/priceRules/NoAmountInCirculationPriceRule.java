@@ -2,6 +2,12 @@ package market.priceRules;
 
 import java.io.Serializable;
 
+import market.entityCreator.SemiRandomValuesGenerator;
+
+/**
+ * Price rule that doesn't take amount in circulation into account while
+ * updating the rate.
+ */
 public class NoAmountInCirculationPriceRule implements AssetPriceRule, Serializable {
     /**
      * @param DifferenceInAmountInCircularion amount in circulation before - now
@@ -18,7 +24,10 @@ public class NoAmountInCirculationPriceRule implements AssetPriceRule, Serializa
      */
     @Override
     public float updateWRTHype(float DifferenceInHype) {
-        return DifferenceInHype / 1000;
+        if (SemiRandomValuesGenerator.getRandomFloatNumber(1) < 0.5) {
+            return DifferenceInHype / 100;
+        } else
+            return 0;
     }
 
     /**

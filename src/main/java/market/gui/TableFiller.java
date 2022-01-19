@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import market.assets.Asset;
+import market.entityCreator.SemiRandomValuesGenerator;
 import market.markets.Market;
 import market.traders.Trader;
 import market.world.World;
@@ -38,9 +39,11 @@ public class TableFiller {
     private String[] assetConstructorNames = { "name", "type", "amountInCirculation", "hypeLevel", "amountOfOwners" };
 
     private ObservableList<TableColumn<Asset, String>> assetColumns = FXCollections.observableArrayList();
+    private MainPanelController controller;
 
-    public TableFiller(World world) {
+    public TableFiller(World world, MainPanelController controller) {
         this.world = world;
+        this.controller = controller;
     }
 
     /**
@@ -100,13 +103,20 @@ public class TableFiller {
     /**
      * @param root
      */
-    private void popUp(Parent root) {
+    private void popUp(Parent root, Object controller, String type) {
         Image icon = new Image(TableFiller.class.getResourceAsStream("coin.png")); // this url is taken from javaFX
                                                                                    // docs
         Stage stage = new Stage();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.getIcons().add(icon);
+        if (type.equals("asset")) {
+            AssetPlotController c = (AssetPlotController) controller;
+            stage.setOnCloseRequest(e -> {
+                c.stop();
+            });
+        }
+
         stage.show();
     }
 
@@ -124,12 +134,13 @@ public class TableFiller {
         loader = new FXMLLoader(TableFiller.class.getResource(filename));
         loadController(loader, type, thing);
         Parent root = loader.load();
-        popUp(root);
+        popUp(root, loader.getController(), type);
     }
 
     private void loadController(FXMLLoader loader, String type, Object thing) {
         if (type.equals("asset"))
-            loader.setController(new AssetPlotController((Asset) thing, world));
+            loader.setController(new AssetPlotController((Asset) thing, world,
+                    SemiRandomValuesGenerator.getRandomIdentifier(10), this.controller));
         else if (type.equals("trader"))
             loader.setController(new TraderDetailsController((Trader) thing));
         else
