@@ -1,4 +1,4 @@
-<div align="center"><h1>MARKET SIMULATOR VER 1.0.0</h1><h3>Sebastian Chwilczyński 148248<h3></div>
+<div align="center"><h1>MARKET SIMULATOR VER 1.0.0</h1><h3>Sebastian Chwilczyński<h3></div>
 
 
 If you have done any changes and you want to generate new documentation run:<br>
